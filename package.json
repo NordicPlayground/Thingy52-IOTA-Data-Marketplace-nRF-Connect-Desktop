@@ -1,13 +1,13 @@
 {
-  "name": "pc-nrfconnect-boilerplate",
+  "name": "Iota",
   "version": "1.1.0",
   "description": "Starting point for creating nRF Connect apps",
-  "displayName": "Your App Name",
+  "displayName": "Iota",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NordicSemiconductor/pc-nrfconnect-boilerplate.git"
+    "url": ""
   },
-  "author": "Nordic Semiconductor ASA",
+  "author": "Nordic Semiconductor ASA / NTNU",
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "nrfconnect": "2.x"
@@ -31,7 +31,10 @@
     "clean-modules": "rimraf \"node_modules/!(rimraf|.bin)\""
   },
   "devDependencies": {
-    "pc-nrfconnect-devdep": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-devdep.git#semver:^1.2.2"
+    "pc-nrfconnect-devdep": "https://github.com/NordicSemiconductor/pc-nrfconnect-devdep.git#v1.1.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "change-case": "^3.0.1",
+    "redux-thunk": "^2.2.0"
+  }
 }

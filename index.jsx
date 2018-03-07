@@ -34,10 +34,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 import React from 'react';
-import { logger } from 'nrfconnect/core';
-import Hello from './components/Hello';
+import { getAppDir, getUserDataDir, logger } from 'nrfconnect/core';
+import { confirmUserUUIDsExist } from './lib/utils/uuid_definitions';
+//import DiscoveredDevices from './lib/containers/DiscoveredDevices';
+import reducers from './lib/reducers/index';
+
 import './resources/css/index.less';
+import * as AdapterActions from './lib/actions/adapterActions';
+
+
 
 /* eslint-disable react/prop-types */
 
@@ -49,24 +56,54 @@ import './resources/css/index.less';
  * All of these functions are optional. You could just export an empty object
  * here if you want to start from scratch with the default behavior.
  */
+
+const initialState = {};
+
 export default {
     onInit: () => {
         logger.info('App initializing');
     },
-    onReady: () => {
+    onReady: dispatch => {
         logger.info('App initialized');
+        confirmUserUUIDsExist(getUserDataDir());  
+        //dispatch(AdapterActions.findAdapters());    
     },
+    reduceApp: reducers,
+    middleware: store => next => action => {
+        if (action.type != 'LOG_ADD_ENTRIES'){
+            logger.info(action.type)
+            console.log(store.getState())    
+        }
+        if (action.type === 'SERIAL_PORT_SELECTED') { 
+            const { port } = action;
+            store.dispatch(AdapterActions.selectedSerialPort(port));
+        }
+        next(action);
+    },
+    decorateNavMenu: NavMenu => (
+        props => (
+            <NavMenu
+                {...props}
+                menuItems={[
+                    { id: '', text: 'About', iconClass: 'icon-star' },
+                ]}
+            />
+        )
+    ),
+    decorateMainView: MainView => (
+        props => {
+            return (
+                <MainView {...props}>
+                    
+                </MainView>
+            );
+        }
+    ),
     decorateFirmwareDialog: FirmwareDialog => (
         props => (
             <FirmwareDialog {...props} />
         )
     ),
-    mapFirmwareDialogState: (state, props) => ({
-        ...props,
-    }),
-    mapFirmwareDialogDispatch: (dispatch, props) => ({
-        ...props,
-    }),
     decorateLogEntry: LogEntry => (
         props => (
             <LogEntry {...props} />
@@ -77,6 +114,12 @@ export default {
             <LogHeader {...props} />
         )
     ),
+    mapFirmwareDialogState: (state, props) => ({
+        ...props,
+    }),
+    mapFirmwareDialogDispatch: (dispatch, props) => ({
+        ...props,
+    }),
     mapLogHeaderState: (state, props) => ({
         ...props,
     }),
@@ -99,38 +142,18 @@ export default {
     mapLogViewerDispatch: (dispatch, props) => ({
         ...props,
     }),
-    decorateMainView: MainView => (
-        props => {
-            const { title } = props;
-            return (
-                <MainView {...props}>
-                    <Hello title={title} />
-                </MainView>
-            );
-        }
-    ),
     mapMainViewState: (state, props) => ({
-        ...props,
+        ...props, 
     }),
     mapMainViewDispatch: (dispatch, props) => ({
         ...props,
-        title: 'Hello World!',
     }),
     decorateNavBar: NavBar => (
         props => (
             <NavBar {...props} />
         )
     ),
-    decorateNavMenu: NavMenu => (
-        props => (
-            <NavMenu
-                {...props}
-                menuItems={[
-                    { id: 'about', text: 'About', iconClass: 'icon-star' },
-                ]}
-            />
-        )
-    ),
+
     mapNavMenuState: (state, props) => ({
         ...props,
     }),
@@ -156,8 +179,7 @@ export default {
     }),
     decorateSidePanel: SidePanel => (
         props => (
-            <SidePanel {...props}>
-                SidePanel content
+            <SidePanel>
             </SidePanel>
         )
     ),
@@ -167,14 +189,4 @@ export default {
     mapSidePanelDispatch: (dispatch, props) => ({
         ...props,
     }),
-    // Note: initial state of the application needs to be provided
-    reduceApp: (state = {}, action) => {
-        switch (action.type) {
-            default:
-                return state;
-        }
-    },
-    middleware: store => next => action => { // eslint-disable-line
-        next(action);
-    },
 };
