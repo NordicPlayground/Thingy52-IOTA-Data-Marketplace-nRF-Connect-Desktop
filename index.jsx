@@ -57,8 +57,6 @@ import * as AdapterActions from './lib/actions/adapterActions';
  * here if you want to start from scratch with the default behavior.
  */
 
-const initialState = {};
-
 export default {
     onInit: () => {
         logger.info('App initializing');
@@ -66,12 +64,13 @@ export default {
     onReady: dispatch => {
         logger.info('App initialized');
         confirmUserUUIDsExist(getUserDataDir());  
-        //dispatch(AdapterActions.findAdapters());    
+        dispatch(AdapterActions.findAdapters());   
+        
     },
     reduceApp: reducers,
     middleware: store => next => action => {
         if (action.type != 'LOG_ADD_ENTRIES'){
-            logger.info(action.type)
+            //logger.info(action.type)
             console.log(store.getState())    
         }
         if (action.type === 'SERIAL_PORT_SELECTED') { 
