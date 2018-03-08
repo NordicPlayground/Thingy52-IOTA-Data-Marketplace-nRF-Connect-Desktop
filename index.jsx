@@ -38,7 +38,7 @@
 import React from 'react';
 import { getAppDir, getUserDataDir, logger } from 'nrfconnect/core';
 import { confirmUserUUIDsExist } from './lib/utils/uuid_definitions';
-//import DiscoveredDevices from './lib/containers/DiscoveredDevices';
+import DiscoveredDevices from './lib/containers/DiscoveredDevices';
 import reducers from './lib/reducers/index';
 
 import './resources/css/index.less';
@@ -71,7 +71,7 @@ export default {
     middleware: store => next => action => {
         if (action.type != 'LOG_ADD_ENTRIES'){
             //logger.info(action.type)
-            console.log(store.getState())    
+            //console.log(store.getState())    
         }
         if (action.type === 'SERIAL_PORT_SELECTED') { 
             const { port } = action;
@@ -179,6 +179,7 @@ export default {
     decorateSidePanel: SidePanel => (
         props => (
             <SidePanel>
+                <DiscoveredDevices {...props} />
             </SidePanel>
         )
     ),

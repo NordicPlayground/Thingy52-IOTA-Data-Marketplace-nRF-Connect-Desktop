@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "change-case": "^3.0.1",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "mousetrap": "^1.6.1"
   }
 }

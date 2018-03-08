@@ -34,22 +34,74 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-'use strict';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { FormGroup, ControlLabel, FormControl, InputGroup } from 'react-bootstrap';
 
-import { combineReducers } from 'redux';
-import { Record, List, OrderedMap } from 'immutable';
-import { logger } from 'nrfconnect/core';
+const TextInput = props => {
+    const {
+        id,
+        inline,
+        validationState,
+        label,
+        labelClassName,
+        wrapperClassName,
+        hasFeedback,
+        buttonAfter,
+        value,
+        ...newProps
+    } = props;
+    const bsClassProp = inline && { bsClass: 'form-inline' };
 
-import adapter from './adapterReducer';
-import discovery from './discoveryReducer';
+    const realValue = `${value}`;
 
+    return (
+        <FormGroup controlId={id} validationState={validationState} {...bsClassProp}>
+            {
+                label && <ControlLabel className={labelClassName}>{label}</ControlLabel>
+            }
+            <InputGroup className={wrapperClassName}>
+                <FormControl value={realValue} {...newProps} />
+                { hasFeedback && <FormControl.Feedback /> }
+                { buttonAfter && <InputGroup.Button>{ buttonAfter }</InputGroup.Button> }
+            </InputGroup>
+        </FormGroup>
+    );
+};
 
+TextInput.propTypes = {
+    id: PropTypes.string,
+    label: PropTypes.string,
+    validationState: PropTypes.string,
+    buttonAfter: PropTypes.node,
+    hasFeedback: PropTypes.bool,
+    labelClassName: PropTypes.string,
+    wrapperClassName: PropTypes.string,
+    inline: PropTypes.bool,
+    title: PropTypes.string,
+    className: PropTypes.string,
+    onChange: PropTypes.func,
+    placeholder: PropTypes.string,
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+};
 
+TextInput.defaultProps = {
+    id: '',
+    label: '',
+    validationState: null,
+    buttonAfter: null,
+    hasFeedback: false,
+    labelClassName: 'col-md-3 text-right',
+    wrapperClassName: 'col-md-9',
+    inline: true,
+    title: null,
+    className: null,
+    onChange: null,
+    placeholder: '',
+    value: null,
+};
 
-
-const rootReducer = combineReducers({
-    adapter,
-    discovery
-});
-
-export default rootReducer;
+export default TextInput;

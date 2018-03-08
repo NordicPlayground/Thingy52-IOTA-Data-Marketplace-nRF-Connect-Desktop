@@ -34,22 +34,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-'use strict';
+import React from 'react';
+import Mousetrap from 'mousetrap';
 
-import { combineReducers } from 'redux';
-import { Record, List, OrderedMap } from 'immutable';
-import { logger } from 'nrfconnect/core';
+export default ComposedComponent => (
+    class WithHotkey extends React.Component {
+        constructor(props) {
+            super(props);
+            this.bindings = [];
+            this.bindHotkey = this.bindHotkey.bind(this);
+        }
 
-import adapter from './adapterReducer';
-import discovery from './discoveryReducer';
+        bindHotkey(key, callback, action) {
+            Mousetrap.bind(key, callback, action);
+            this.bindings.push(key);
+        }
 
+        componentWillUnmount() {
+            this.bindings.forEach(key => Mousetrap.unbind(key));
+        }
 
-
-
-
-const rootReducer = combineReducers({
-    adapter,
-    discovery
-});
-
-export default rootReducer;
+        render() {
+            return (
+                <ComposedComponent
+                    bindHotkey={this.bindHotkey}
+                    {...this.props}
+                />
+            );
+        }
+    }
+);

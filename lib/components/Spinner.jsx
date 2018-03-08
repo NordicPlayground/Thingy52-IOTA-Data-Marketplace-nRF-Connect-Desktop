@@ -34,22 +34,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-'use strict';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import { combineReducers } from 'redux';
-import { Record, List, OrderedMap } from 'immutable';
-import { logger } from 'nrfconnect/core';
+const Spinner = props => {
+    const { size, visible, className } = props;
+    const style = {
+        visibility: visible ? 'visible' : 'hidden',
+        width: size,
+        height: size,
+    };
+    return (
+        <div className={className} style={style} />
+    );
+};
 
-import adapter from './adapterReducer';
-import discovery from './discoveryReducer';
+Spinner.propTypes = {
+    size: PropTypes.number,
+    visible: PropTypes.bool,
+    className: PropTypes.string,
+};
 
+Spinner.defaultProps = {
+    size: 16,
+    visible: false,
+    className: 'spinner',
+};
 
-
-
-
-const rootReducer = combineReducers({
-    adapter,
-    discovery
-});
-
-export default rootReducer;
+export default Spinner;
