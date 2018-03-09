@@ -44,6 +44,8 @@ import reducers from './lib/reducers/index';
 import './resources/css/index.less';
 import * as AdapterActions from './lib/actions/adapterActions';
 
+import { DeviceDetailsContainer } from './lib/containers/deviceDetails';
+
 
 
 /* eslint-disable react/prop-types */
@@ -56,6 +58,16 @@ import * as AdapterActions from './lib/actions/adapterActions';
  * All of these functions are optional. You could just export an empty object
  * here if you want to start from scratch with the default behavior.
  */
+
+
+/*
+
+Thingy refferanse:
+app.adapter.api.selectedAdapter.devices
+
+*/
+
+
 
 export default {
     onInit: () => {
@@ -77,6 +89,8 @@ export default {
             const { port } = action;
             store.dispatch(AdapterActions.selectedSerialPort(port));
         }
+        if (action.type === 'DEVICE_DETAILS_COMPLETED_READING_ATTRIBUTE'){
+        }
         next(action);
     },
     decorateNavMenu: NavMenu => (
@@ -93,11 +107,15 @@ export default {
         props => {
             return (
                 <MainView {...props}>
-                    
+                    <DeviceDetailsContainer />
                 </MainView>
             );
         }
     ),
+    mapMainViewState: (state, props) => ({
+            ...props,
+         
+    }),
     decorateFirmwareDialog: FirmwareDialog => (
         props => (
             <FirmwareDialog {...props} />
@@ -141,9 +159,7 @@ export default {
     mapLogViewerDispatch: (dispatch, props) => ({
         ...props,
     }),
-    mapMainViewState: (state, props) => ({
-        ...props, 
-    }),
+    
     mapMainViewDispatch: (dispatch, props) => ({
         ...props,
     }),
