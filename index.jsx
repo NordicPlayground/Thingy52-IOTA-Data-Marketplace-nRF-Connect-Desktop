@@ -45,7 +45,7 @@ import './resources/css/index.less';
 import * as AdapterActions from './lib/actions/adapterActions';
 
 import { DeviceDetailsContainer } from './lib/containers/deviceDetails';
-
+import { MainViewContent } from './lib/containers/MainViewContent';
 
 
 /* eslint-disable react/prop-types */
@@ -107,7 +107,7 @@ export default {
         props => {
             return (
                 <MainView {...props}>
-                    <DeviceDetailsContainer />
+                    <DeviceDetailsContainer {...props} />
                 </MainView>
             );
         }
