@@ -89,6 +89,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
     writeDescriptorButtonClicked(){
         let state = this.context.store.getState()
+        console.log("App state: ",JSON.stringify(state.app,null,2))
         const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
         let deviceDetail = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
         const children = deviceDetail.get("children")
@@ -103,13 +104,20 @@ export class DeviceDetailsContainer extends React.PureComponent {
         }
         let state = this.context.store.getState()
         const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-        let deviceDetail = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
+        //let deviceDetail = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
+        let deviceDetail = deviceDetails.devices.forEach(device => {
+            console.log("device: ", JSON.stringify(device,null,2))
+        })
+        
+        
+        /*
         const children = deviceDetail.get("children")
         const weather = children.get("F8:1B:03:0B:46:5D.0.5")
         console.log(weather.get("children"))
     
         this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(weather, !weather.expanded))
         console.log("weather2: ",JSON.stringify(weather,null,2))
+        */
     }
         
 
