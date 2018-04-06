@@ -6,6 +6,7 @@ import React from 'react';
 import { bindActionCreators, getState } from 'redux';
 import { connect } from 'react-redux';
 import { logger } from 'nrfconnect/core';
+import { Panel, Form, FormGroup, ControlLabel, FormControl, InputGroup, Checkbox } from 'react-bootstrap';
 
 import * as DeviceDetailsActions from '../actions/deviceDetailsActions';
 import * as AdapterActions from '../actions/adapterActions';
@@ -156,13 +157,13 @@ export class DeviceDetailsContainer extends React.PureComponent {
         //})
 
         const sensorServices = thingy.get("children")
-        console.log("sensorservices: ", JSON.stringify(sensorServices, null,2))
+        console.log("sensorservices: ", JSON.stringify(sensorServices, null, 2))
         //const weather = sensorServices.get("F8:1B:03:0B:46:5D.0.5")
         //const weather = sensorServices.get("children")
 
         let requests = sensorServices.map(service => {
             return new Promise(resolve => {
-                
+
                 this.asyncFunction(service, resolve);
                 console.log("promise!")
             })
@@ -176,8 +177,8 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
     }
 
-    toggleWeatherCheckboxChange(){
-        if (!this.state.weatherIsChecked){
+    toggleWeatherCheckboxChange() {
+        if (!this.state.weatherIsChecked) {
 
             let state = this.context.store.getState()
             const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
@@ -187,15 +188,15 @@ export class DeviceDetailsContainer extends React.PureComponent {
             this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(weather, !weather.expanded));
 
             console.log("weather expanded")
-            this.setState({weatherIsChecked: true})
+            this.setState({ weatherIsChecked: true })
         }
         else {
-            this.setState({weatherIsChecked: false})
-        }   
+            this.setState({ weatherIsChecked: false })
+        }
     }
 
-    toggleMotionCheckboxChange(){
-        if (!this.state.motionIsChecked){
+    toggleMotionCheckboxChange() {
+        if (!this.state.motionIsChecked) {
 
             let state = this.context.store.getState()
             const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
@@ -205,18 +206,77 @@ export class DeviceDetailsContainer extends React.PureComponent {
             this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(motion, !motion.expanded));
 
             console.log("motion expanded")
-            this.setState({motioIsChecked: true})
+            this.setState({ motioIsChecked: true })
         }
         else {
-            this.setState({motionIsChecked: false})
-        }   
+            this.setState({ motionIsChecked: false })
+        }
     }
+
+
+
+
+
     render() {
 
+        // Styles
+        const settingsPanelStyle = {
+            width: "40%",
+            background: "white",
+        }
+        const statusContainerStyle = {
+        }
+        const statusStyle = {
+            //borderRight: "1px solid lightgrey"
+        }
+        const nextPublishStyle = {
 
+        }
 
         return (
-            <div>
+            <Panel style={settingsPanelStyle}>
+                <h3><b> Settings </b></h3>
+                <hr/>
+                <div className="container-fluid">
+                    <div className="row" style={statusContainerStyle}>
+                        <div className="col-md-6 col-md-auto" style={statusStyle}>
+                            <b>Status</b><br />
+                            Not publishing
+                        </div>
+                        <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
+                            <b>Next Publish</b><br />
+                            Never
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <Form>
+                    <FormGroup>
+                        <ControlLabel>How often should the data be published?</ControlLabel>
+                        <InputGroup class="input-group-lg">
+                            <InputGroup.Addon>Every</InputGroup.Addon>
+                            <FormControl type="text" value="10" />
+                            <InputGroup.Addon>minutes</InputGroup.Addon>
+                        </InputGroup>
+                    </FormGroup>
+                    <hr/>
+                    <FormGroup>
+                        <ControlLabel>Select what sensor data should be published</ControlLabel>
+                        <Checkbox checked >Temperature</Checkbox>
+                        <Checkbox checked >Pressure</Checkbox>
+                        <Checkbox checked readOnly>Humidity</Checkbox>
+                        <Checkbox checked readOnly>CO2</Checkbox>
+                        <Checkbox checked readOnly>VOC</Checkbox>
+                    </FormGroup>
+                </Form>
+                <hr/>
+                <button
+                    title="Clear list (Alt+C)"
+                    type="button"
+                    className="btn btn-primary btn-lg btn-nordic padded-row"
+                >Start publishing</button>
+                <hr/>
+
                 <div><button onClick={this.buttonClicked}>expand attributes</button></div>
                 <div><button onClick={this.writeDescriptorButtonClicked}>write descriptor</button></div>
                 <div>
@@ -231,7 +291,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                         onChange={this.toggleMotionCheckboxChange}
                     /> Motion
                 </div>
-            </div>
+            </Panel>
 
         );
     }
