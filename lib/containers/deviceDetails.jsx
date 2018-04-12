@@ -2,7 +2,6 @@
 import React from 'react';
 //import PropTypes from 'prop-types';
 
-
 import { bindActionCreators, getState } from 'redux';
 import { connect } from 'react-redux';
 import { logger } from 'nrfconnect/core';
@@ -16,7 +15,6 @@ import { getInstanceIds } from '../utils/api';
 
 const NOTIFY = 1;
 const INDICATE = 2;
-let buttonClicked = 0;
 const CCCD_UUID = "2902"
 
 export class DeviceDetailsContainer extends React.PureComponent {
@@ -24,18 +22,18 @@ export class DeviceDetailsContainer extends React.PureComponent {
     constructor(props) {
         super(props)
         this.buttonClicked = this.buttonClicked.bind(this)
-        this.writeDescriptorButtonClicked = this.writeDescriptorButtonClicked.bind(this)
+        this.toggleCharacteristicWrite = this.toggleCharacteristicWrite.bind(this)
         this.onToggleNotify = this.onToggleNotify.bind(this)
         this.findCccdDescriptor = this.findCccdDescriptor.bind(this)
         this.isNotifying = this.isNotifying.bind(this)
-        this.asyncFunction = this.asyncFunction.bind(this)
-        this.toggleMotionCheckboxChange = this.toggleMotionCheckboxChange.bind(this)
-        this.toggleWeatherCheckboxChange = this.toggleWeatherCheckboxChange.bind(this)
+        this.checkBoxClicked = this.checkBoxClicked.bind(this)
+        this.expandAttribute = this.expandAttribute.bind(this)
+        this.getSensorServices = this.getSensorServices.bind(this)
 
         this.state = {
-            weatherIsChecked: false,
-            motionIsChecked: false
-
+            temperatureIsChecked: false,
+            pressureIsChecked: false,
+            humidityIsChecked: false,
         };
     }
 
@@ -44,24 +42,14 @@ export class DeviceDetailsContainer extends React.PureComponent {
     }
 
     findCccdDescriptor(children) {
-        if (!children) {
-            return undefined;
-        }
-
+        if (!children) { return undefined; }
         return children.find(child => child.uuid === CCCD_UUID);
     }
 
     isNotifying(cccdDescriptor) {
-        if (!cccdDescriptor) {
-            return false;
-        }
-
+        if (!cccdDescriptor) { return false; }
         const valueArray = cccdDescriptor.value.toArray();
-
-        if (valueArray.length < 2) {
-            return false;
-        }
-
+        if (valueArray.length < 2) { return false; }
         return ((valueArray[0] & (NOTIFY | INDICATE)) > 0);
     }
 
@@ -71,13 +59,8 @@ export class DeviceDetailsContainer extends React.PureComponent {
         const hasNotifyProperty = characteristic.properties.notify//this.props.item.properties.notify;
         const hasIndicateProperty = characteristic.properties.indicate//this.props.item.properties.indicate;
 
-        if (cccdDescriptor === undefined) {
-            return;
-        }
-
-        if (!hasNotifyProperty && !hasIndicateProperty) {
-            return;
-        }
+        if (cccdDescriptor === undefined) { return; }
+        if (!hasNotifyProperty && !hasIndicateProperty) { return; }
 
         let cccdValue;
         logger.error(cccdDescriptor.value);
@@ -90,142 +73,62 @@ export class DeviceDetailsContainer extends React.PureComponent {
         } else {
             cccdValue = 0;
         }
-
         const value = [cccdValue, 0];
         //this.props.onWriteDescriptor(this.cccdDescriptor, value);
         this.context.store.dispatch(DeviceDetailsActions.writeDescriptor(cccdDescriptor, value))
-
     }
 
-    writeDescriptorButtonClicked() {
+    getSensorServices(){
         let state = this.context.store.getState()
+        const deviceKey = state.app.adapter.connectedDevice + ".0"
+
         const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-        console.log("selectedAdapterIndex: ", state.app.adapter.selectedAdapterIndex)
-        let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
+        const thingy = deviceDetails.devices.get(deviceKey);
         const sensorServices = thingy.get("children")
-
-
-        /*
-        sensorServices.forEach(service => {
-
-            //console.log("service: ",service)
-            
-            //console.log("service")
-            console.log(service.get("children"))
-            if (service.get("children")){
-                let subServices = service.get("children")
-                subServices.forEach(subService => {
-                    console.log("subservice: ", JSON.stringify(subService,null,2))              
-                    if (subService.get("children")) {
-                        let subSubServices = subService.get("children")
-                        subSubServices.forEach(subSubService => {
-                            console.log(JSON.stringify(subSubService,null,2))
-                        })
-                    }
-                })
-            }
-        })
-        */
-
-        console.log("sensorServices:",JSON.stringify(thingy.get("children"), null, 2))
-        /*
-        let state = this.context.store.getState()
-        console.log("App state: ",JSON.stringify(state.app,null,2))
-        const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-        let deviceDetail = deviceDetails.devices.get("F0:F0:E3:01:21:52.0.0");
-        */
-        //const children = thingy.get("children")
-        const weather = sensorServices.get("F0:F0:E3:01:21:52.0.5")
-        console.log("Weather children:", JSON.stringify(weather, null, 2) )
-        this.onToggleNotify(weather.get("children").get("F0:F0:E3:01:21:52.0.5.6"))
+        return sensorServices;
     }
 
-    asyncFunction(item, callback) {
-        setTimeout(() => {
-            this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(item, !item.expanded));
-            callback();
-        }, 2000)
+    toggleCharacteristicWrite(attributeID,characteristicID) {
+        let state = this.context.store.getState()
+        const deviceKey = state.app.adapter.connectedDevice + ".0"
+        const service = this.getSensorServices().get(deviceKey + attributeID)
+        this.onToggleNotify(service.get("children").get(deviceKey + attributeID + characteristicID))
     }
 
     buttonClicked() {
-        if (buttonClicked === 0) {
+        this.expandAttribute(".5")
+    }   
 
+    checkBoxClicked(event){
+        switch(event.target.value){
+            case "5.6":
+                this.setState({ temperatureIsChecked: !this.state.temperatureIsChecked })
+                this.toggleCharacteristicWrite(".5",".6")
+                break;
+            case "5.7":
+                this.setState({ pressureIsChecked: !this.state.pressureIsChecked })
+                this.toggleCharacteristicWrite(".5",".7")
+                break;
+            case "5.8":
+                this.setState({ humidityIsChecked: !this.state.humidityIsChecked })
+                this.toggleCharacteristicWrite(".5",".8")
+                break;
+            case "5.9":
+                break;
         }
+    }
+
+    expandAttribute(attributeID){
         let state = this.context.store.getState()
-        const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-        let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
-        //let thingy = deviceDetails.devices.forEach(device => {
-        //    console.log("device: ", JSON.stringify(device.get("children"),null,2))
-        //})
+        const deviceKey = state.app.adapter.connectedDevice + ".0"
 
+        const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails'])
+        const thingy = deviceDetails.devices.get(deviceKey)
         const sensorServices = thingy.get("children")
-        console.log("sensorservices: ", JSON.stringify(sensorServices, null, 2))
-        //const weather = sensorServices.get("F8:1B:03:0B:46:5D.0.5")
-        //const weather = sensorServices.get("children")
-
-        let requests = sensorServices.map(service => {
-            return new Promise(resolve => {
-
-                this.asyncFunction(service, resolve);
-                console.log("promise!")
-            })
-        })
-
-
-        Promise.all(requests).then(() => console.log("sensorServices: ", JSON.stringify(sensorServices, null, 2)))
-
-        //this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(weather, !weather.expanded))
-        //console.log("weather2: ",JSON.stringify(sensorServices,null,2))
-
+        const attribute = sensorServices.get(deviceKey + attributeID)
+        this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(attribute, true))
+        //console.log("sensorServices: ", JSON.stringify(sensorServices,null,2))    
     }
-
-    toggleWeatherCheckboxChange() {
-        if (!this.state.weatherIsChecked) {
-
-            let state = this.context.store.getState()
-            const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-            
-            
-           
-            const deviceKey = state.app.adapter.connectedDevice + ".0"
-            console.log("cennectedDevice: ", deviceKey)
-
-
-            let thingy = deviceDetails.devices.get(deviceKey);
-            const sensorServices = thingy.get("children")
-            console.log(deviceKey + ".5")
-            console.log("device details: ",JSON.stringify(deviceDetails, null, 2));
-            const weather = sensorServices.get(deviceKey + ".5")
-            this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(weather, !weather.expanded));
-
-            console.log("weather expanded = ",!weather.expanded)
-            this.setState({ weatherIsChecked: true })
-        }
-        else {
-            this.setState({ weatherIsChecked: false })
-        }
-    }
-
-    toggleMotionCheckboxChange() {
-        if (!this.state.motionIsChecked) {
-
-            let state = this.context.store.getState()
-            const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-            let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
-            const sensorServices = thingy.get("children")
-            const motion = sensorServices.get("F0:F0:E3:01:21:52.0.6")
-            this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(motion, !motion.expanded));
-
-            console.log("motion expanded = ",!motion.expanded)
-            this.setState({ motioIsChecked: true })
-        }
-        else {
-            this.setState({ motionIsChecked: false })
-        }
-    }
-
-
-
 
 
     render() {
@@ -241,7 +144,6 @@ export class DeviceDetailsContainer extends React.PureComponent {
             //borderRight: "1px solid lightgrey"
         }
         const nextPublishStyle = {
-
         }
 
         return (
@@ -251,11 +153,11 @@ export class DeviceDetailsContainer extends React.PureComponent {
                 <div className="container-fluid">
                     <div className="row" style={statusContainerStyle}>
                         <div className="col-md-6 col-md-auto" style={statusStyle}>
-                            <b>Status</b><br />
+                            <b>Status</b><br/>
                             Not publishing
                         </div>
                         <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
-                            <b>Next Publish</b><br />
+                            <b>Next Publish</b><br/>
                             Never
                         </div>
                     </div>
@@ -265,6 +167,12 @@ export class DeviceDetailsContainer extends React.PureComponent {
                     
                 </Form>
                 <hr/>
+                <FormGroup>
+                    <ControlLabel>Select what sensor data should be published</ControlLabel>
+                        <Checkbox value="5.6" checked={this.state.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
+                        <Checkbox value="5.7" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
+                        <Checkbox value="5.8" checked={this.state.humidityIschecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
+                </FormGroup>
                 <button
                     title="Clear list (Alt+C)"
                     type="button"
@@ -273,19 +181,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                 <hr/>
 
                 <div><button onClick={this.buttonClicked}>expand attributes</button></div>
-                <div><button onClick={this.writeDescriptorButtonClicked}>write descriptor</button></div>
-                <div>
-                    <input
-                        type="checkbox"
-                        checked={this.state.WeatherIsChecked}
-                        onChange={this.toggleWeatherCheckboxChange}
-                    /> Weather
-                    <input
-                        type="checkbox"
-                        checked={this.state.MotionIsChecked}
-                        onChange={this.toggleMotionCheckboxChange}
-                    /> Motion
-                </div>
+                
             </Panel>
 
         );
@@ -294,6 +190,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
 }
 
 /*
+<div><button onClick={this.writeDescriptorButtonClicked}>write descriptor</button></div>
 
                     <FormGroup>
                         <ControlLabel>How often should the data be published?</ControlLabel>
@@ -304,15 +201,6 @@ export class DeviceDetailsContainer extends React.PureComponent {
                         </InputGroup>
                     </FormGroup>
                     <hr/>
-
-<FormGroup>
-                        <ControlLabel>Select what sensor data should be published</ControlLabel>
-                        <Checkbox checked >Temperature</Checkbox>
-                        <Checkbox checked >Pressure</Checkbox>
-                        <Checkbox checked readOnly>Humidity</Checkbox>
-                        <Checkbox checked readOnly>CO2</Checkbox>
-                        <Checkbox checked readOnly>VOC</Checkbox>
-                    </FormGroup>
 
 */
 
