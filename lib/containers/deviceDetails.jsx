@@ -101,8 +101,9 @@ export class DeviceDetailsContainer extends React.PureComponent {
         let state = this.context.store.getState()
         const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
         console.log("selectedAdapterIndex: ", state.app.adapter.selectedAdapterIndex)
-        let thingy = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
+        let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
         const sensorServices = thingy.get("children")
+
 
         /*
         sensorServices.forEach(service => {
@@ -126,16 +127,17 @@ export class DeviceDetailsContainer extends React.PureComponent {
         })
         */
 
-        console.log(JSON.stringify(thingy.get("children"), null, 2))
+        console.log("sensorServices:",JSON.stringify(thingy.get("children"), null, 2))
         /*
         let state = this.context.store.getState()
         console.log("App state: ",JSON.stringify(state.app,null,2))
         const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-        let deviceDetail = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
-        const children = deviceDetail.get("children")
-        const weather = children.get("F8:1B:03:0B:46:5D.0.5")
-
-        this.onToggleNotify(weather.get("children").get("F8:1B:03:0B:46:5D.0.5.6"))*/
+        let deviceDetail = deviceDetails.devices.get("F0:F0:E3:01:21:52.0.0");
+        */
+        //const children = thingy.get("children")
+        const weather = sensorServices.get("F0:F0:E3:01:21:52.0.5")
+        console.log("Weather children:", JSON.stringify(weather, null, 2) )
+        this.onToggleNotify(weather.get("children").get("F0:F0:E3:01:21:52.0.5.6"))
     }
 
     asyncFunction(item, callback) {
@@ -151,7 +153,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
         }
         let state = this.context.store.getState()
         const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-        let thingy = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
+        let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
         //let thingy = deviceDetails.devices.forEach(device => {
         //    console.log("device: ", JSON.stringify(device.get("children"),null,2))
         //})
@@ -182,12 +184,15 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
             let state = this.context.store.getState()
             const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-            let thingy = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
+            console.log("device details: ",deviceDetails);
+
+
+            let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
             const sensorServices = thingy.get("children")
-            const weather = sensorServices.get("F8:1B:03:0B:46:5D.0.5")
+            const weather = sensorServices.get("F0:F0:E3:01:21:52.0.5")
             this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(weather, !weather.expanded));
 
-            console.log("weather expanded")
+            console.log("weather expanded = ",!weather.expanded)
             this.setState({ weatherIsChecked: true })
         }
         else {
@@ -200,12 +205,12 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
             let state = this.context.store.getState()
             const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-            let thingy = deviceDetails.devices.get("F8:1B:03:0B:46:5D.0");
+            let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
             const sensorServices = thingy.get("children")
-            const motion = sensorServices.get("F8:1B:03:0B:46:5D.0.6")
+            const motion = sensorServices.get("F0:F0:E3:01:21:52.0.6")
             this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(motion, !motion.expanded));
 
-            console.log("motion expanded")
+            console.log("motion expanded = ",!motion.expanded)
             this.setState({ motioIsChecked: true })
         }
         else {
@@ -260,14 +265,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                         </InputGroup>
                     </FormGroup>
                     <hr/>
-                    <FormGroup>
-                        <ControlLabel>Select what sensor data should be published</ControlLabel>
-                        <Checkbox checked >Temperature</Checkbox>
-                        <Checkbox checked >Pressure</Checkbox>
-                        <Checkbox checked readOnly>Humidity</Checkbox>
-                        <Checkbox checked readOnly>CO2</Checkbox>
-                        <Checkbox checked readOnly>VOC</Checkbox>
-                    </FormGroup>
+                    
                 </Form>
                 <hr/>
                 <button
@@ -297,6 +295,20 @@ export class DeviceDetailsContainer extends React.PureComponent {
     }
 
 }
+
+/*
+<FormGroup>
+                        <ControlLabel>Select what sensor data should be published</ControlLabel>
+                        <Checkbox checked >Temperature</Checkbox>
+                        <Checkbox checked >Pressure</Checkbox>
+                        <Checkbox checked readOnly>Humidity</Checkbox>
+                        <Checkbox checked readOnly>CO2</Checkbox>
+                        <Checkbox checked readOnly>VOC</Checkbox>
+                    </FormGroup>
+
+*/
+
+
 
 
 /*
