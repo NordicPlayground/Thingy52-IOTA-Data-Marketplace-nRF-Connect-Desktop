@@ -78,7 +78,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
         this.context.store.dispatch(DeviceDetailsActions.writeDescriptor(cccdDescriptor, value))
     }
 
-    getSensorServices(){
+    getSensorServices() {
         let state = this.context.store.getState()
         const deviceKey = state.app.adapter.connectedDevice + ".0"
 
@@ -88,7 +88,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
         return sensorServices;
     }
 
-    toggleCharacteristicWrite(attributeID,characteristicID) {
+    toggleCharacteristicWrite(attributeID, characteristicID) {
         let state = this.context.store.getState()
         const deviceKey = state.app.adapter.connectedDevice + ".0"
         const service = this.getSensorServices().get(deviceKey + attributeID)
@@ -97,28 +97,28 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
     buttonClicked() {
         this.expandAttribute(".5")
-    }   
+    }
 
-    checkBoxClicked(event){
-        switch(event.target.value){
+    checkBoxClicked(event) {
+        switch (event.target.value) {
             case "5.6":
                 this.setState({ temperatureIsChecked: !this.state.temperatureIsChecked })
-                this.toggleCharacteristicWrite(".5",".6")
+                this.toggleCharacteristicWrite(".5", ".6")
                 break;
             case "5.7":
                 this.setState({ pressureIsChecked: !this.state.pressureIsChecked })
-                this.toggleCharacteristicWrite(".5",".7")
+                this.toggleCharacteristicWrite(".5", ".7")
                 break;
             case "5.8":
                 this.setState({ humidityIsChecked: !this.state.humidityIsChecked })
-                this.toggleCharacteristicWrite(".5",".8")
+                this.toggleCharacteristicWrite(".5", ".8")
                 break;
             case "5.9":
                 break;
         }
     }
 
-    expandAttribute(attributeID){
+    expandAttribute(attributeID) {
         let state = this.context.store.getState()
         const deviceKey = state.app.adapter.connectedDevice + ".0"
 
@@ -135,8 +135,15 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
         // Styles
         const settingsPanelStyle = {
-            width: "40%",
+            width: "100%",
+            maxWidth: "800px",
             background: "white",
+        }
+        const leftPanelStyle = {
+            width: "50%"
+        }
+        const rightPanelStyle = {
+            width: "50%"
         }
         const statusContainerStyle = {
         }
@@ -147,43 +154,61 @@ export class DeviceDetailsContainer extends React.PureComponent {
         }
 
         return (
-            <Panel style={settingsPanelStyle}>
+            <Panel ckassName="row" style={settingsPanelStyle}>
                 <h3><b> Settings </b></h3>
-                <hr/>
-                <div className="container-fluid">
-                    <div className="row" style={statusContainerStyle}>
-                        <div className="col-md-6 col-md-auto" style={statusStyle}>
-                            <b>Status</b><br/>
-                            Not publishing
-                        </div>
-                        <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
-                            <b>Next Publish</b><br/>
-                            Never
+                <hr />
+                <div className="col-md-6 col-md-auto" style={leftPanelStyle}>
+                    
+                    <div className="container-fluid">
+                        <div className="row" style={statusContainerStyle}>
+                            <div className="col-md-6 col-md-auto" style={statusStyle}>
+                                <b>Status</b><br />
+                                Not publishing
+                            </div>
+                            <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
+                                <b>Next Publish</b><br />
+                                Never
+                            </div>
                         </div>
                     </div>
-                </div>
-                <hr/>
-                <Form>
+
+                    <hr />
                     
-                </Form>
-                <hr/>
-                <FormGroup>
-                    <ControlLabel>Select what sensor data should be published</ControlLabel>
+                    <Form>
+                        <FormGroup>
+                            <ControlLabel>How often should the data be published?</ControlLabel>
+                            <InputGroup class="input-group-lg">
+                                <InputGroup.Addon>Every</InputGroup.Addon>
+                                <FormControl type="text" value="10" />
+                                <InputGroup.Addon>minutes</InputGroup.Addon>
+                            </InputGroup>
+                        </FormGroup>
+                    </Form>
+                    
+                </div>
+
+                <div className="col-md-6 col-md-auto" style={rightPanelStyle}>
+
+                    <FormGroup>
+                        <ControlLabel>Select what sensor data should be published</ControlLabel>
                         <Checkbox value="5.6" checked={this.state.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
                         <Checkbox value="5.7" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
                         <Checkbox value="5.8" checked={this.state.humidityIschecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
-                </FormGroup>
-                <button
-                    title="Clear list (Alt+C)"
-                    type="button"
-                    className="btn btn-primary btn-lg btn-nordic padded-row"
-                >Start publishing</button>
-                <hr/>
+                    </FormGroup>
+
+                    <hr />
+
+                    <button
+                        title="Clear list (Alt+C)"
+                        type="button"
+                        className="btn btn-primary btn-lg btn-nordic padded-row"
+                    >Start publishing</button>
+
+                </div>
 
                 <div><button onClick={this.buttonClicked}>expand attributes</button></div>
-                
-            </Panel>
 
+            </Panel>
         );
     }
 
@@ -191,16 +216,6 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
 /*
 <div><button onClick={this.writeDescriptorButtonClicked}>write descriptor</button></div>
-
-                    <FormGroup>
-                        <ControlLabel>How often should the data be published?</ControlLabel>
-                        <InputGroup class="input-group-lg">
-                            <InputGroup.Addon>Every</InputGroup.Addon>
-                            <FormControl type="text" value="10" />
-                            <InputGroup.Addon>minutes</InputGroup.Addon>
-                        </InputGroup>
-                    </FormGroup>
-                    <hr/>
 
 */
 
