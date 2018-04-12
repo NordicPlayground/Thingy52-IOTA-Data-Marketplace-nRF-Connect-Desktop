@@ -94,7 +94,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
         const value = [cccdValue, 0];
         //this.props.onWriteDescriptor(this.cccdDescriptor, value);
         this.context.store.dispatch(DeviceDetailsActions.writeDescriptor(cccdDescriptor, value))
-        console.log("weather3", JSON.stringify(characteristic, null, 2))
+
     }
 
     writeDescriptorButtonClicked() {
@@ -184,12 +184,18 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
             let state = this.context.store.getState()
             const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
-            console.log("device details: ",deviceDetails);
+            
+            
+           
+            const deviceKey = state.app.adapter.connectedDevice + ".0"
+            console.log("cennectedDevice: ", deviceKey)
 
 
-            let thingy = deviceDetails.devices.get("F0:F0:E3:01:21:52.0");
+            let thingy = deviceDetails.devices.get(deviceKey);
             const sensorServices = thingy.get("children")
-            const weather = sensorServices.get("F0:F0:E3:01:21:52.0.5")
+            console.log(deviceKey + ".5")
+            console.log("device details: ",JSON.stringify(deviceDetails, null, 2));
+            const weather = sensorServices.get(deviceKey + ".5")
             this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(weather, !weather.expanded));
 
             console.log("weather expanded = ",!weather.expanded)
@@ -256,15 +262,6 @@ export class DeviceDetailsContainer extends React.PureComponent {
                 </div>
                 <hr/>
                 <Form>
-                    <FormGroup>
-                        <ControlLabel>How often should the data be published?</ControlLabel>
-                        <InputGroup class="input-group-lg">
-                            <InputGroup.Addon>Every</InputGroup.Addon>
-                            <FormControl type="text" value="10" />
-                            <InputGroup.Addon>minutes</InputGroup.Addon>
-                        </InputGroup>
-                    </FormGroup>
-                    <hr/>
                     
                 </Form>
                 <hr/>
@@ -297,6 +294,17 @@ export class DeviceDetailsContainer extends React.PureComponent {
 }
 
 /*
+
+                    <FormGroup>
+                        <ControlLabel>How often should the data be published?</ControlLabel>
+                        <InputGroup class="input-group-lg">
+                            <InputGroup.Addon>Every</InputGroup.Addon>
+                            <FormControl type="text" value="10" />
+                            <InputGroup.Addon>minutes</InputGroup.Addon>
+                        </InputGroup>
+                    </FormGroup>
+                    <hr/>
+
 <FormGroup>
                         <ControlLabel>Select what sensor data should be published</ControlLabel>
                         <Checkbox checked >Temperature</Checkbox>
