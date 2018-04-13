@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "change-case": "^3.0.1",
-    "redux-thunk": "^2.2.0",
-    "mousetrap": "^1.6.1"
+    "iota.lib.js": "^0.4.7",
+    "mousetrap": "^1.6.1",
+    "redux-thunk": "^2.2.0"
   }
 }
