@@ -43,12 +43,23 @@ export class DeviceDetailsContainer extends React.PureComponent {
             publishInterval: 10,
             isPublishing: false,
             interval: null,
+            isExpanded: false,
         };
     }
 
     static contextTypes = {
         store: React.PropTypes.object
     }
+
+    thingyIsConnected(){
+        let connected = false
+        let state = this.context.store.getState()
+        if (state.app.adapter.connectedDevice != ''){
+            connected = true
+        }
+        return connected
+    }
+
 
     findCccdDescriptor(children) {
         if (!children) { return undefined; }
@@ -113,16 +124,15 @@ export class DeviceDetailsContainer extends React.PureComponent {
     }
 
     publish(){
-        if(this.state.isPublishing){
-            clearInterval(this.state.interval);
-            this.setState({isPublishing: false})
-        }else{
-            this.setState({interval: setInterval(this.navn, this.state.publishInterval*1000)})
-            this.setState({isPublishing: true})
-        }
-        
-        
-        
+        if(this.state.isExpanded){
+            if(this.state.isPublishing){
+                clearInterval(this.state.interval);
+                this.setState({isPublishing: false})
+            }else{
+                this.setState({interval: setInterval(this.navn, this.state.publishInterval*1000)})
+                this.setState({isPublishing: true})
+            }  
+        } 
     }
 
 
@@ -148,35 +158,39 @@ export class DeviceDetailsContainer extends React.PureComponent {
     }
 
     checkBoxClicked(event) {
-        switch (event.target.value) {
-            case "5.6":
-                this.setState({ temperatureIsChecked: !this.state.temperatureIsChecked })
-                this.toggleCharacteristicWrite(".5", ".6")
-                break;
-            case "5.7":
-                this.setState({ pressureIsChecked: !this.state.pressureIsChecked })
-                this.toggleCharacteristicWrite(".5", ".7")
-                break;
-            case "5.8":
-                this.setState({ humidityIsChecked: !this.state.humidityIsChecked })
-                this.toggleCharacteristicWrite(".5", ".8")
-                break;
-            case "5.9":
-                console.log(this.state.publishInterval)
-                break;
+        if(this.state.isExpanded){
+            switch (event.target.value) {
+                case "5.6":
+                    this.setState({ temperatureIsChecked: !this.state.temperatureIsChecked })
+                    this.toggleCharacteristicWrite(".5", ".6")
+                    break;
+                case "5.7":
+                    this.setState({ pressureIsChecked: !this.state.pressureIsChecked })
+                    this.toggleCharacteristicWrite(".5", ".7")
+                    break;
+                case "5.8":
+                    this.setState({ humidityIsChecked: !this.state.humidityIsChecked })
+                    this.toggleCharacteristicWrite(".5", ".8")
+                    break;
+            }
         }
+        
     }
 
 
     expandAttribute(attributeID) {
-        let state = this.context.store.getState()
-        const deviceKey = state.app.adapter.connectedDevice + ".0"
+        if(this.thingyIsConnected()){
+            let state = this.context.store.getState()
+            const deviceKey = state.app.adapter.connectedDevice + ".0"
 
-        const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails'])
-        const thingy = deviceDetails.devices.get(deviceKey)
-        const sensorServices = thingy.get("children")
-        const attribute = sensorServices.get(deviceKey + attributeID)
-        this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(attribute, true))
+            const deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails'])
+            const thingy = deviceDetails.devices.get(deviceKey)
+            const sensorServices = thingy.get("children")
+            const attribute = sensorServices.get(deviceKey + attributeID)
+            this.context.store.dispatch(DeviceDetailsActions.setAttributeExpanded(attribute, true))
+            this.setState({isExpanded: true})    
+        }
+        
         //console.log("sensorServices: ", JSON.stringify(sensorServices,null,2))    
     }
 
@@ -247,8 +261,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                         <Checkbox value="5.6" checked={this.state.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
                         <Checkbox value="5.7" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
                         <Checkbox value="5.8" checked={this.state.humidityIschecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
-                        <Checkbox value="5.9" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >test</Checkbox>
-                        
+                       
                     </FormGroup>
 
                     <hr />
