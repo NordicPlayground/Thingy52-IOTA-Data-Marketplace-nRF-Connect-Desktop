@@ -29,11 +29,20 @@ export class DeviceDetailsContainer extends React.PureComponent {
         this.checkBoxClicked = this.checkBoxClicked.bind(this)
         this.expandAttribute = this.expandAttribute.bind(this)
         this.getSensorServices = this.getSensorServices.bind(this)
+        this.handeUpdateChange = this.handeUpdateChange.bind(this)
+        this.publish = this.publish.bind(this)
+        this.getAttributeValue = this.getAttributeValue.bind(this)
+        this.navn = this.navn.bind(this)
+
+        
 
         this.state = {
             temperatureIsChecked: false,
             pressureIsChecked: false,
             humidityIsChecked: false,
+            publishInterval: 10,
+            isPublishing: false,
+            interval: null,
         };
     }
 
@@ -78,6 +87,45 @@ export class DeviceDetailsContainer extends React.PureComponent {
         this.context.store.dispatch(DeviceDetailsActions.writeDescriptor(cccdDescriptor, value))
     }
 
+    getAttributeValue(attributeID, characteristicID){ //
+        
+        let state = this.context.store.getState()
+        const deviceKey = state.app.adapter.connectedDevice + ".0"
+        const service = this.getSensorServices().get(deviceKey + attributeID)
+        return service.get("children").get(deviceKey + attributeID + characteristicID).value        
+
+    }    
+
+    navn(){
+        let temperature, pressure, humidity;
+
+        if (this.state.temperatureIsChecked){
+            temperature = this.getAttributeValue(".5", ".6")
+        }
+        if (this.state.pressureIsChecked){
+            pressure = this.getAttributeValue(".5", ".7")
+        }
+        if (this.state.humidityIsChecked){
+            humidity = this.getAttributeValue(".5", ".8")
+        }
+        
+        console.log("temperature: ", temperature, "pressue: ", pressure, "humidity: ", humidity)
+    }
+
+    publish(){
+        if(this.state.isPublishing){
+            clearInterval(this.state.interval);
+            this.setState({isPublishing: false})
+        }else{
+            this.setState({interval: setInterval(this.navn, this.state.publishInterval*1000)})
+            this.setState({isPublishing: true})
+        }
+        
+        
+        
+    }
+
+
     getSensorServices() {
         let state = this.context.store.getState()
         const deviceKey = state.app.adapter.connectedDevice + ".0"
@@ -114,9 +162,11 @@ export class DeviceDetailsContainer extends React.PureComponent {
                 this.toggleCharacteristicWrite(".5", ".8")
                 break;
             case "5.9":
+                console.log(this.state.publishInterval)
                 break;
         }
     }
+
 
     expandAttribute(attributeID) {
         let state = this.context.store.getState()
@@ -130,6 +180,9 @@ export class DeviceDetailsContainer extends React.PureComponent {
         //console.log("sensorServices: ", JSON.stringify(sensorServices,null,2))    
     }
 
+    handeUpdateChange(event){
+        this.setState({publishInterval: event.target.value})
+    }
 
     render() {
 
@@ -179,7 +232,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                             <ControlLabel>How often should the data be published?</ControlLabel>
                             <InputGroup class="input-group-lg">
                                 <InputGroup.Addon>Every</InputGroup.Addon>
-                                <FormControl type="text" value="10" />
+                                <FormControl type="text" value={this.state.publishInterval} onChange={this.handeUpdateChange} />
                                 <InputGroup.Addon>minutes</InputGroup.Addon>
                             </InputGroup>
                         </FormGroup>
@@ -194,6 +247,8 @@ export class DeviceDetailsContainer extends React.PureComponent {
                         <Checkbox value="5.6" checked={this.state.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
                         <Checkbox value="5.7" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
                         <Checkbox value="5.8" checked={this.state.humidityIschecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
+                        <Checkbox value="5.9" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >test</Checkbox>
+                        
                     </FormGroup>
 
                     <hr />
@@ -202,6 +257,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                         title="Clear list (Alt+C)"
                         type="button"
                         className="btn btn-primary btn-lg btn-nordic padded-row"
+                        onClick={this.publish}
                     >Start publishing</button>
 
                 </div>
