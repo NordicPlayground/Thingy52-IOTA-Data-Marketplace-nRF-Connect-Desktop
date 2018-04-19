@@ -26,7 +26,6 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
     constructor(props) {
         super(props)
-        this.buttonClicked = this.buttonClicked.bind(this)
         this.toggleCharacteristicWrite = this.toggleCharacteristicWrite.bind(this)
         this.onToggleNotify = this.onToggleNotify.bind(this)
         this.findCccdDescriptor = this.findCccdDescriptor.bind(this)
@@ -38,6 +37,8 @@ export class DeviceDetailsContainer extends React.PureComponent {
         this.publish = this.publish.bind(this)
         this.getAttributeValue = this.getAttributeValue.bind(this)
         this.navn = this.navn.bind(this)
+        this.checkIfConnected = this.checkIfConnected.bind(this)
+        this.thingyIsConnected = this.thingyIsConnected.bind(this)
 
         
 
@@ -49,12 +50,29 @@ export class DeviceDetailsContainer extends React.PureComponent {
             isPublishing: false,
             interval: null,
             isExpanded: false,
+            isConnected: false,
+            isConnectedText: "not",
+            deviceDetails: null,
         };
     }
+
+    
 
     static contextTypes = {
         store: React.PropTypes.object
     }
+
+    checkIfConnected(){
+        if(this.thingyIsConnected()){
+            this.expandAttribute(".5")
+            this.setState({isConnected: true, isConnectedText: ""})
+        }
+    }
+
+    componentDidMount(){
+        setInterval(this.checkIfConnected , 3000);
+    }
+    
 
     thingyIsConnected(){
         let connected = false
@@ -158,9 +176,6 @@ export class DeviceDetailsContainer extends React.PureComponent {
         this.onToggleNotify(service.get("children").get(deviceKey + attributeID + characteristicID))
     }
 
-    buttonClicked() {
-        this.expandAttribute(".5")
-    }
 
     checkBoxClicked(event) {
         if(this.state.isExpanded){
@@ -280,7 +295,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
                 </div>
 
-                <div><button onClick={this.buttonClicked}>expand attributes</button></div>
+                <div>Thingy is {this.state.isConnectedText} connected</div>
 
             </Panel>
         );
@@ -295,8 +310,8 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
 
 
-
 /*
+
 const details = ({deviceDetails}) => {
     return (
         <div>
@@ -306,7 +321,6 @@ const details = ({deviceDetails}) => {
 
 
 function mapStateToProps(state) {
-    console.log("mapStateToprops")
     const {
         adapter,
     } = state.app;
@@ -327,6 +341,6 @@ export default connect(
     mapStateToProps,
 )(details)
 
-
 */
+
 
