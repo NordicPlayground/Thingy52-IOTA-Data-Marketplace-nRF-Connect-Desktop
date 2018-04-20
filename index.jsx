@@ -44,7 +44,8 @@ import reducers from './lib/reducers/index';
 import './resources/css/index.less';
 import * as AdapterActions from './lib/actions/adapterActions';
 
-import { DeviceDetailsContainer } from './lib/containers/deviceDetails';
+import DeviceDetailsContainer from './lib/containers/deviceDetails';
+import { Container } from './lib/containers/container';
 import { MainViewContent } from './lib/containers/MainViewContent';
 
 

@@ -1,17 +1,13 @@
 
 import React from 'react';
-//import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
+import { OrderedMap } from 'immutable';
 import { bindActionCreators, getState } from 'redux';
 import { connect } from 'react-redux';
 import { logger } from 'nrfconnect/core';
 import { Panel, Form, FormGroup, ControlLabel, FormControl, InputGroup, Checkbox } from 'react-bootstrap';
-//import * as dataPublisher from '../../iota/data_publisher';
-/*
-console.log(dataPublisher.publish({
-    "time": Date.now(),
-    "data": {"temperature": "25"}
-})) */
+
 import * as DeviceDetailsActions from '../actions/deviceDetailsActions';
 import * as AdapterActions from '../actions/adapterActions';
 
@@ -22,10 +18,12 @@ const NOTIFY = 1;
 const INDICATE = 2;
 const CCCD_UUID = "2902"
 
-export class DeviceDetailsContainer extends React.PureComponent {
+class DeviceDetailsContainer extends React.PureComponent {
 
     constructor(props) {
         super(props)
+        this.g = this.g.bind(this)
+        /*
         this.toggleCharacteristicWrite = this.toggleCharacteristicWrite.bind(this)
         this.onToggleNotify = this.onToggleNotify.bind(this)
         this.findCccdDescriptor = this.findCccdDescriptor.bind(this)
@@ -33,47 +31,53 @@ export class DeviceDetailsContainer extends React.PureComponent {
         this.checkBoxClicked = this.checkBoxClicked.bind(this)
         this.expandAttribute = this.expandAttribute.bind(this)
         this.getSensorServices = this.getSensorServices.bind(this)
-        this.handeUpdateChange = this.handeUpdateChange.bind(this)
+        this.handleUpdateChange = this.handleUpdateChange.bind(this)
         this.publish = this.publish.bind(this)
         this.getAttributeValue = this.getAttributeValue.bind(this)
         this.navn = this.navn.bind(this)
         this.checkIfConnected = this.checkIfConnected.bind(this)
         this.thingyIsConnected = this.thingyIsConnected.bind(this)
-
         
-
         this.state = {
-            temperatureIsChecked: false,
-            pressureIsChecked: false,
-            humidityIsChecked: false,
-            publishInterval: 10,
-            isPublishing: false,
-            interval: null,
-            isExpanded: false,
-            isConnected: false,
-            isConnectedText: "not",
-            deviceDetails: null,
-        };
+            temperatureIsChecked: this.props.temperatureIsChecked,
+            pressureIsChecked: this.props.pressureIsChecked,
+            humidityIsChecked: this.props.humidityIschecked,
+            publishInterval: this.props.publishInterval,
+            isPublishing: this.props.isPublishing,
+            interval: this.props.interval,
+            isExpanded: this.props.isExpanded,
+            isConnected: this.props.isConnected,
+            isConnectedText: this.props.isConnectedText,
+            adapter: this.props.adapter,
+            adapterState: this.props.selectedAdapter.state,
+            selectedComponent: this.props.selectedComponent,
+            connectedDevices: this.props.connectedDevice,
+            deviceDetails: this.props.deviceDetails,
+            deviceInfo: this.props.deviceInfo,
+        }
+        */
     }
 
+    /*
     
-
-    static contextTypes = {
-        store: React.PropTypes.object
-    }
-
     checkIfConnected(){
+        
         if(this.thingyIsConnected()){
             this.expandAttribute(".5")
             this.setState({isConnected: true, isConnectedText: ""})
         }
+
     }
 
+
     componentDidMount(){
+         this.state = {
+            
+        };
         setInterval(this.checkIfConnected , 3000);
     }
     
-
+    
     thingyIsConnected(){
         let connected = false
         let state = this.context.store.getState()
@@ -178,9 +182,10 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
 
     checkBoxClicked(event) {
-        if(this.state.isExpanded){
+        if(this.props.isExpanded){
             switch (event.target.value) {
                 case "5.6":
+                this.props.set('temperatureIsChecked')
                     this.setState({ temperatureIsChecked: !this.state.temperatureIsChecked })
                     this.toggleCharacteristicWrite(".5", ".6")
                     break;
@@ -214,12 +219,27 @@ export class DeviceDetailsContainer extends React.PureComponent {
         //console.log("sensorServices: ", JSON.stringify(sensorServices,null,2))    
     }
 
-    handeUpdateChange(event){
-        this.setState({publishInterval: event.target.value})
+    handleUpdateChange(event){
+        this.props.set('publishInterval',event.target.value)
+    }
+    
+    */
+    g(){
+        if(this.props.connectedDevices != null){
+            return (<div>{this.props.connectedDevices.map((item,i) => <li key={i}>Test</li>)} </div>)
+        }
+        
     }
 
     render() {
-
+        return(
+            <div>
+                {this.g()}
+            </div>
+        )
+    };
+}
+        /*
         // Styles
         const settingsPanelStyle = {
             width: "100%",
@@ -266,7 +286,7 @@ export class DeviceDetailsContainer extends React.PureComponent {
                             <ControlLabel>How often should the data be published?</ControlLabel>
                             <InputGroup class="input-group-lg">
                                 <InputGroup.Addon>Every</InputGroup.Addon>
-                                <FormControl type="text" value={this.state.publishInterval} onChange={this.handeUpdateChange} />
+                                <FormControl type="text" value={this.props.publishInterval} onChange={this.handleUpdateChange} />
                                 <InputGroup.Addon>minutes</InputGroup.Addon>
                             </InputGroup>
                         </FormGroup>
@@ -278,9 +298,9 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
                     <FormGroup>
                         <ControlLabel>Select what sensor data should be published</ControlLabel>
-                        <Checkbox value="5.6" checked={this.state.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
-                        <Checkbox value="5.7" checked={this.state.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
-                        <Checkbox value="5.8" checked={this.state.humidityIschecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
+                        <Checkbox value="5.6" checked={this.props.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
+                        <Checkbox value="5.7" checked={this.props.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
+                        <Checkbox value="5.8" checked={this.props.humidityIschecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
                        
                     </FormGroup>
 
@@ -303,22 +323,29 @@ export class DeviceDetailsContainer extends React.PureComponent {
 
 }
 
-/*
-<div><button onClick={this.writeDescriptorButtonClicked}>write descriptor</button></div>
 
 */
 
+DeviceDetailsContainer.propTypes = {
+    adapterState: PropTypes.object,
+    selectedComponent: PropTypes.string,
+    deviceDetails: PropTypes.object,
+    deviceInfo: PropTypes.object,
+    connectedDevices: PropTypes.object,
+}
 
-
-/*
-
-const details = ({deviceDetails}) => {
-    return (
-        <div>
-            {deviceDetails}
-        </div>)
-    }
-
+DeviceDetailsContainer.defaultProps = {
+    temperatureIsChecked: false,
+    pressureIsChecked: false,
+    humidityIsChecked: false,
+    publishInterval: 10,
+    isPublishing: false,
+    interval: null,
+    isExpanded: false,
+    isConnected: false,
+    isConnectedText: "not",
+    adapter: null,
+};
 
 function mapStateToProps(state) {
     const {
@@ -332,15 +359,20 @@ function mapStateToProps(state) {
     }
 
     return {
-        deviceDetails: selectedAdapter.deviceDetails
+        adapterState: selectedAdapter.state,
+        selectedComponent: (selectedAdapter.deviceDetails
+            && selectedAdapter.deviceDetails.selectedComponent),
+        connectedDevices: selectedAdapter.connectedDevices,
+        deviceDetails: selectedAdapter.deviceDetails,
+        deviceInfo: adapter.deviceInfo,
     };
 }
 
 
-export default connect(
-    mapStateToProps,
-)(details)
+export default connect(mapStateToProps)(DeviceDetailsContainer)
 
-*/
+
+
+
 
 
