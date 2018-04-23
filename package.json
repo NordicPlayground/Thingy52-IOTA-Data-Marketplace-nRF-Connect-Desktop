@@ -31,12 +31,17 @@
     "clean-modules": "rimraf \"node_modules/!(rimraf|.bin)\""
   },
   "devDependencies": {
-    "pc-nrfconnect-devdep": "https://github.com/NordicSemiconductor/pc-nrfconnect-devdep.git#v1.1.0"
+    "pc-nrfconnect-devdep": "https://github.com/NordicSemiconductor/pc-nrfconnect-devdep.git#v1.1.0",
+    "rust-emscripten-loader": "0.0.1"
   },
   "dependencies": {
+    "babel-preset-stage-0": "^6.24.1",
     "change-case": "^3.0.1",
     "iota.lib.js": "^0.4.7",
+    "mam.client.js": "git+https://github.com/iotaledger/mam.client.js.git",
     "mousetrap": "^1.6.1",
-    "redux-thunk": "^2.2.0"
+    "pify": "^3.0.0",
+    "redux-thunk": "^2.2.0",
+    "eslint-plugin-import": "^2.7.0"
   }
 }
