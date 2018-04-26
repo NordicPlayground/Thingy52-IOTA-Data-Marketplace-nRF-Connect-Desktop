@@ -118,9 +118,8 @@ class DeviceDetailsContainer extends React.PureComponent {
                 this.props.clearPublishInterval();
                 this.setState({buttonState: "Start Publishing"})
             }else{
-                this.props.setPublishInterval(this.publish, counter, this.state.publishInterval*60000)
+                this.props.setPublishInterval(this.publish, this.counter, this.state.publishInterval*60000)
                 this.state.counter = this.state.publishInterval*60
-                this.counterInterval = setInterval(this.counter, 1000)
                 this.setState({buttonState: "Stop Publishing"})
             }  
         } 
@@ -153,6 +152,9 @@ class DeviceDetailsContainer extends React.PureComponent {
                 case "5.8":
                     this.props.checkboxIsChecked("humidity")
                     this.toggleCharacteristicWrite(".5", ".4")
+                    break;
+                case "print":
+                    this.props.checkboxIsChecked("print")
                     break;
             }
         }
@@ -241,7 +243,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         <Checkbox value="5.6" checked={this.props.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
                         <Checkbox value="5.7" checked={this.props.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
                         <Checkbox value="5.8" checked={this.props.humidityIsChecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
-                       
+                        <Checkbox value="print" checked={this.props.print} onChange={this.checkBoxClicked}>Print</Checkbox>
                     </FormGroup>
 
                     <hr />
@@ -252,7 +254,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         className="btn btn-primary btn-lg btn-nordic padded-row"
                         onClick={this.publishClick}
                     >{this.state.buttonState}</button> Next publish in: {this.state.counter}s
-
+                    
                 </div>
             </Panel>
         );
@@ -275,6 +277,8 @@ DeviceDetailsContainer.propTypes = {
     isPublishing: PropTypes.bool,
     interval: PropTypes.object,
     isExpanded: PropTypes.bool,
+    print: PropTypes.bool,
+    characteristics: PropTypes.object,
 }
 
 DeviceDetailsContainer.defaultProps = {
@@ -295,13 +299,13 @@ function mapStateToProps(state) {
     let thingy = null
     let sensorServices = null
 
+    console.log(menu)
+
     if(deviceKey != ".0"){
         deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
         thingy = deviceDetails.devices.get(deviceKey);
         sensorServices = thingy.get("children")
     }
-    
-
 
     if (!selectedAdapter) {
         return {};
@@ -311,7 +315,6 @@ function mapStateToProps(state) {
         deviceDetails: deviceDetails,
         thingy: thingy,
         sensorServices: sensorServices,
-        
         temperatureIsChecked: menu.temperatureIsChecked,
         pressureIsChecked: menu.pressureIsChecked,
         humidityIsChecked: menu.humidityIsChecked,
@@ -319,7 +322,8 @@ function mapStateToProps(state) {
         isPublishing: menu.isPublishing,
         interval: menu.interval,
         isExpanded: menu.isExpanded,
-
+        characteristics: menu.characteristics,
+        print: menu.print,
     };
 }
 
