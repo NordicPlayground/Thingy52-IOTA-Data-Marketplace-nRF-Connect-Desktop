@@ -142,19 +142,18 @@ class DeviceDetailsContainer extends React.PureComponent {
             
             switch (event.target.value) {
                 case "5.6":
-                    this.props.checkboxIsChecked("temperature")
+                    this.props.checkboxIsChecked("temperature")   
                     this.toggleCharacteristicWrite(".5", ".2")
+                    
                     break;
                 case "5.7":
-                    this.props.checkboxIsChecked("pressure")
+                    this.props.checkboxIsChecked("pressure") 
                     this.toggleCharacteristicWrite(".5", ".3")
+                    
                     break;
                 case "5.8":
                     this.props.checkboxIsChecked("humidity")
                     this.toggleCharacteristicWrite(".5", ".4")
-                    break;
-                case "print":
-                    this.props.checkboxIsChecked("print")
                     break;
             }
         }
@@ -212,11 +211,11 @@ class DeviceDetailsContainer extends React.PureComponent {
                             <div className="col-md-6 col-md-auto" style={statusStyle}>
                                 <b>Status</b><br />
                                 <div>Connected to :{this.props.deviceKey}</div>
-                                Not publishing
+                                <div>Publishing: { this.props.isPublishing }</div>
                             </div>
                             <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
                                 <b>Next Publish</b><br />
-                                Never
+                                {this.state.counter}s
                             </div>
                         </div>
                     </div>
@@ -240,11 +239,10 @@ class DeviceDetailsContainer extends React.PureComponent {
 
                     <FormGroup>
                         <ControlLabel>Select what sensor data should be published</ControlLabel>
-                        <Checkbox value="5.6" checked={this.props.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>
-                        <Checkbox value="5.7" checked={this.props.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>
-                        <Checkbox value="5.8" checked={this.props.humidityIsChecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>
-                        <Checkbox value="print" checked={this.props.print} onChange={this.checkBoxClicked}>Print</Checkbox>
-                    </FormGroup>
+                        <div><Checkbox value="5.6" checked={this.props.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>{this.props.characteristics.temperature}</div>
+                        <div><Checkbox value="5.7" checked={this.props.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>{this.props.characteristics.pressure}</div>
+                        <div><Checkbox value="5.8" checked={this.props.humidityIsChecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>{this.props.characteristics.humidity}</div>
+                     </FormGroup>
 
                     <hr />
 
@@ -253,7 +251,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         type="button"
                         className="btn btn-primary btn-lg btn-nordic padded-row"
                         onClick={this.publishClick}
-                    >{this.state.buttonState}</button> Next publish in: {this.state.counter}s
+                    >{this.state.buttonState}</button> 
                     
                 </div>
             </Panel>
@@ -277,7 +275,6 @@ DeviceDetailsContainer.propTypes = {
     isPublishing: PropTypes.bool,
     interval: PropTypes.object,
     isExpanded: PropTypes.bool,
-    print: PropTypes.bool,
     characteristics: PropTypes.object,
 }
 
@@ -299,8 +296,6 @@ function mapStateToProps(state) {
     let thingy = null
     let sensorServices = null
 
-    console.log(menu)
-
     if(deviceKey != ".0"){
         deviceDetails = state.app.adapter.getIn(['adapters', state.app.adapter.selectedAdapterIndex, 'deviceDetails']);
         thingy = deviceDetails.devices.get(deviceKey);
@@ -308,7 +303,9 @@ function mapStateToProps(state) {
     }
 
     if (!selectedAdapter) {
-        return {};
+        return {
+            characteristics: { temperature: null, pressure: null, humidity: null },
+        };
     }
     return {
         deviceKey: deviceKey,
@@ -323,7 +320,6 @@ function mapStateToProps(state) {
         interval: menu.interval,
         isExpanded: menu.isExpanded,
         characteristics: menu.characteristics,
-        print: menu.print,
     };
 }
 
