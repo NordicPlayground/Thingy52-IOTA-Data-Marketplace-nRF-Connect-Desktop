@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { logger } from 'nrfconnect/core';
 import { Panel, Form, FormGroup, ControlLabel, FormControl, InputGroup, Checkbox } from 'react-bootstrap';
 
+import * as dataPublisher from '../../iota/data_publisher';
 import * as DeviceDetailsActions from '../actions/deviceDetailsActions';
 import * as AdapterActions from '../actions/adapterActions';
 
