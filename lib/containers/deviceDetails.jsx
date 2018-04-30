@@ -43,6 +43,9 @@ class DeviceDetailsContainer extends React.PureComponent {
           counter: 0,
           counterInterval: null,
           buttonState: "Start Publishing",
+          uuid: "thingy-02",
+          secretKey: "T9XKPHUAMYBIPVC",
+
         };
     }
 
@@ -132,8 +135,23 @@ class DeviceDetailsContainer extends React.PureComponent {
     }
 
     handleInputChange(event){
-        this.setState({ publishInterval: event.target.value });
-        this.props.handleChangeInterval(this.state.publishInterval);
+        switch(event.target.id){
+            case "interval": 
+                this.setState({ publishInterval: event.target.value });
+                this.props.handleChangeInterval(this.state.publishInterval);
+                break;
+            case "uuid":
+                this.setState({ uuid: event.target.value });
+                this.props.handleChangeUUID(this.state.uuid);
+                dataPublisher.uuid = this.props.uuid;
+                break;
+            case "secretKey":
+                this.setState({ secretKey: event.target.value });
+                this.props.handleChangeSecretKey(this.state.secretKey);
+                dataPublisher.secretKey = this.props.secretKey;
+                break;
+                
+        }
     }
 
     toggleCharacteristicWrite(attributeID, characteristicID) {
@@ -233,9 +251,17 @@ class DeviceDetailsContainer extends React.PureComponent {
                             <ControlLabel>How often should the data be published?</ControlLabel>
                             <InputGroup class="input-group-lg">
                                 <InputGroup.Addon>Every</InputGroup.Addon>
-                                <FormControl type="text" value={this.state.publishInterval} onChange={this.handleInputChange} />
-                                <InputGroup.Addon>minutes</InputGroup.Addon>
+                                <FormControl type="text" id="interval" value={this.state.publishInterval} onChange={this.handleInputChange} />                                
+                                <InputGroup.Addon>minutes</InputGroup.Addon>                                
                             </InputGroup>
+                        </FormGroup>
+                        <FormGroup>
+                            <InputGroup.Addon>publish-uuid</InputGroup.Addon>
+                            <FormControl type="text" id="uuid"  value={this.state.uuid} onChange={this.handleInputChange} />
+                        </FormGroup>
+                        <FormGroup>
+                            <InputGroup.Addon>secretKey</InputGroup.Addon>
+                            <FormControl type="text" id="secretKey"  value={this.state.secretKey} onChange={this.handleInputChange} />
                         </FormGroup>
                     </Form>
                     
@@ -245,9 +271,9 @@ class DeviceDetailsContainer extends React.PureComponent {
 
                     <FormGroup>
                         <ControlLabel>Select what sensor data should be published</ControlLabel>
-                        <div><Checkbox value="5.6" checked={this.props.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox>{this.props.characteristics.temperature}</div>
-                        <div><Checkbox value="5.7" checked={this.props.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox>{this.props.characteristics.pressure}</div>
-                        <div><Checkbox value="5.8" checked={this.props.humidityIsChecked} onChange={this.checkBoxClicked} >Humidity</Checkbox>{this.props.characteristics.humidity}</div>
+                        <div><div><Checkbox value="5.6" checked={this.props.temperatureIsChecked} onChange={this.checkBoxClicked} >Temperature</Checkbox></div><div>{this.props.characteristics.temperature}</div></div>
+                        <div><div><Checkbox value="5.7" checked={this.props.pressureIsChecked} onChange={this.checkBoxClicked} >Pressure</Checkbox></div><div>{this.props.characteristics.pressure}</div></div>
+                        <div><div><Checkbox value="5.8" checked={this.props.humidityIsChecked} onChange={this.checkBoxClicked} >Humidity</Checkbox></div><div>{this.props.characteristics.humidity}</div></div>
                      </FormGroup>
 
                     <hr />
@@ -282,6 +308,8 @@ DeviceDetailsContainer.propTypes = {
     interval: PropTypes.object,
     isExpanded: PropTypes.bool,
     characteristics: PropTypes.object,
+    uuid: PropTypes.string,
+    secretKey: PropTypes.string,
 }
 
 DeviceDetailsContainer.defaultProps = {
@@ -326,6 +354,8 @@ function mapStateToProps(state) {
         interval: menu.interval,
         isExpanded: menu.isExpanded,
         characteristics: menu.characteristics,
+        uuid: menu.uuid,
+        secretKey: menu.secretKey,
     };
 }
 
@@ -337,7 +367,9 @@ function mapDispatchToProps(dispatch) {
     checkboxIsChecked: (value) => {dispatch(MenuActions.checkboxIsChecked(value))},
     setPublishInterval: (func, counterfunc, value) => {dispatch(MenuActions.publish(func, counterfunc, value))},
     clearPublishInterval: () => {dispatch(MenuActions.clearPublishInterval())},
-    handleChangeInterval: (value) => {dispatch(MenuActions.handleChangeInterval(value))}
+    handleChangeInterval: (value) => {dispatch(MenuActions.handleChangeInterval(value))},
+    handleChangeUUID: (value) => {dispatch(MenuActions.handleChangeUUID(value))},
+    handleChangeSecretKey: (value) => {dispatch(MenuActions.handleChangeSecretKey(value))}
     
   };
 }
