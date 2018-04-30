@@ -23,10 +23,10 @@ def run():
 
     try:
         subprocess.call([
-            dir_path + '/env/bin/pip',
+            os.path.abspath(dir_path + '/env/bin/pip'),
             'install',
             '-r',
-            dir_path + '/requirements.txt',
+            os.path.abspath(dir_path + '/requirements.txt'),
         ], cwd=dir_path)
     except:
         os.rmdir(dir_path + '/env/')

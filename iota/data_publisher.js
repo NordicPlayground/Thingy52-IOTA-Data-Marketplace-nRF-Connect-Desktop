@@ -16,7 +16,7 @@ function getUserHome() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
 
-let python_base = getUserHome() + '/.nrfconnect-apps/local/pc-nrfconnect-iota/iota/data_publisher/';
+let python_base = path.normalize(getUserHome() + '/.nrfconnect-apps/local/pc-nrfconnect-iota/iota/data_publisher/');
 python_base = path.resolve(python_base);
 
 try {
@@ -28,15 +28,15 @@ try {
 
 } catch (e) {
 	console.log("Could not find " + python_base + ". " + e)
-	python_base = '~/.nrfconnect-apps/node_modules/pc-nrfconnect-iota/iota/data_publisher';
+	python_base = path.normalize('~/.nrfconnect-apps/node_modules/pc-nrfconnect-iota/iota/data_publisher');
 }
 
 try {
-	var stats = fs.lstatSync(python_base + '/env/bin/python');
+	var stats = fs.lstatSync(path.normalize(python_base + '/env/bin/python'));
 } catch (e) {
 	console.log("Installing python app")
 	let ret = spawnSync('python3', [
-		python_base + '/setup.py'
+		path.normalize(python_base + '/setup.py')
 	]);
 
 	console.log(ret);
@@ -49,7 +49,7 @@ try {
 export const publish = async packet => {
 	let cmd = ''
 	let args = [
-		python_base + '/main.py',
+		path.normalize(python_base + '/main.py'),
 		JSON.stringify(packet),
 		'--devid', uuid,
 		'--secret-key', secretKey,
