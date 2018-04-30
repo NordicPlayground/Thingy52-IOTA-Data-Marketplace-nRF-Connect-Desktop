@@ -12,6 +12,16 @@ function uintToString(uintArray) {
     return decodedString;
 }
 
+export function setUUID(value) {
+	uuid = value;
+	console.log("uuid changed to: ", value)
+}
+
+export function setSecretKey(value) {
+	secretKey = value
+	console.log("secret key changed to: ", value)
+}
+
 function getUserHome() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 }
