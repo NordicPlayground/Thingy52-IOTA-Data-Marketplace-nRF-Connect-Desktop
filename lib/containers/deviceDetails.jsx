@@ -39,7 +39,7 @@ class DeviceDetailsContainer extends React.PureComponent {
         this.counter = this.counter.bind(this)
 
         this.state = {
-          publishInterval: 0.1,
+          publishInterval: 0.5,
           counter: 0,
           counterInterval: null,
           buttonState: "Start Publishing",
@@ -93,18 +93,23 @@ class DeviceDetailsContainer extends React.PureComponent {
 
     publish(){
         let packet = {
-            type: "Tangle packet",
-            value: {
-                temperature: null,
-                pressure: null,
-                humidity: null,
+            time: Date.now(),
+            data: {
+                temperature: "",
+                pressure: "",
+                humidity: ""
             }
         }
-        if(this.props.temperatureIsChecked){packet.value.temperature = this.props.characteristics.temperature}
-        if(this.props.pressureIsChecked){packet.value.pressure = this.props.characteristics.pressure}
-        if(this.props.humidityIsChecked){packet.value.humidity = this.props.characteristics.humidity}
-        console.log("Published packet:", packet)
+        if(this.props.temperatureIsChecked){
+            packet.data.temperature = this.props.characteristics.temperature[0] + "." + this.props.characteristics.pressure[0]}
+        if(this.props.pressureIsChecked){
+            packet.data.pressure = this.props.characteristics.pressure[0] + "." + this.props.characteristics.pressure[1]}
+        if(this.props.humidityIsChecked){
+            packet.data.humidity = this.props.characteristics.humidity[0] + "." + this.props.characteristics.pressure[1]}
+        console.log("Publishing packet:", packet)
         logger.info("Published packet!");
+        //console.log(dataPublisher.publish)
+        dataPublisher.publish(packet)
     }
 
     counter(){

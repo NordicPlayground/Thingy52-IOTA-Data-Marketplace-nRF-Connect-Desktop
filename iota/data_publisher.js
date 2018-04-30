@@ -31,11 +31,21 @@ try {
 	python_base = path.normalize('~/.nrfconnect-apps/node_modules/pc-nrfconnect-iota/iota/data_publisher');
 }
 
+let env_python_cmd = path.normalize(python_base + '/env/bin/python')
+
+if (process.platform == "win32") {
+	env_python_cmd = path.normalize(python_base + '/env/Scripts/python')
+}
+
 try {
-	var stats = fs.lstatSync(path.normalize(python_base + '/env/bin/python'));
+	var stats = fs.lstatSync(env_python_cmd);
 } catch (e) {
+	let python_cmd = "python3";
+	if (process.platform == "win32") {
+		python_cmd = "python";
+	}
 	console.log("Installing python app")
-	let ret = spawnSync('python3', [
+	let ret = spawnSync(python_cmd, [
 		path.normalize(python_base + '/setup.py')
 	]);
 
@@ -55,7 +65,7 @@ export const publish = async packet => {
 		'--secret-key', secretKey,
 	];
 	console.log('Publishing...', args);
-	let child = spawn(python_base + '/env/bin/python', args);
+	let child = spawn(env_python_cmd, args);
 
 	child.stdout.on('data', (chunk) => {
 		console.log('stdout', uintToString(chunk));
@@ -71,11 +81,3 @@ export const publish = async packet => {
 		}
 	});
 }
-
-publish({
-	time: Date.now(),
-	data: {
-		temperature: 30,
-		pressure: 1000,
-	}
-});
