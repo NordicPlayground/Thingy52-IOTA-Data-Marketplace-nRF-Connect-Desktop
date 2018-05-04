@@ -227,6 +227,13 @@ class DeviceDetailsContainer extends React.PureComponent {
         }
         const nextPublishStyle = {
         }
+        const checkboxContainerStyle = {
+            width: "100%",
+        }
+        const checkboxLabelStyle = {
+            marginTop: "10px",
+            marginBottom: "10px",
+        }
 
         return (
             <Panel ckassName="row" style={settingsPanelStyle}>
@@ -277,34 +284,49 @@ class DeviceDetailsContainer extends React.PureComponent {
 
                     <FormGroup>
                         <ControlLabel>Select what sensor data should be published</ControlLabel>
+                        <div className="row" style={checkboxContainerStyle}>
+                            <Checkbox
+                                className="col-md-6 col-md-auto"
+                                value="5.6"
+                                checked={this.props.temperatureIsChecked}
+                                onChange={this.checkBoxClicked}
+                            >
+                                Temperature
+                            </Checkbox>
+                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                {this.props.characteristics.temperature} °C
+                            </div>
 
-                        <Checkbox
-                            value="5.6"
-                            checked={this.props.temperatureIsChecked}
-                            onChange={this.checkBoxClicked}
-                        >
-                            Temperature
+                        </div>
+
+                        <div className="row" style={checkboxContainerStyle}>
+                            <Checkbox
+                                className="col-md-6 col-md-auto"
+                                value="5.7"
+                                checked={this.props.pressureIsChecked}
+                                onChange={this.checkBoxClicked}
+                            >
+                                Pressure
                         </Checkbox>
-                        {this.props.characteristics.temperature}
+                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                {this.props.characteristics.pressure} hPa
+                            </div>
+                        </div>
 
-                        <Checkbox
-                            value="5.7"
-                            checked={this.props.pressureIsChecked}
-                            onChange={this.checkBoxClicked}
-                        >
-                            Pressure
-                        </Checkbox>
-                        {this.props.characteristics.pressure}
-
-                        <Checkbox
-                            value="5.8"
-                            checked={this.props.humidityIsChecked}
-                            onChange={this.checkBoxClicked}
-                        >
-                            Humidity
-                        </Checkbox>
-                        {this.props.characteristics.humidity}
-
+                        <div className="row" style={checkboxContainerStyle}>
+                            <Checkbox
+                                className="col-md-6 col-md-auto"
+                                value="5.8"
+                                checked={this.props.humidityIsChecked}
+                                onChange={this.checkBoxClicked}
+                            >
+                                Humidity
+                            </Checkbox>
+                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                {this.props.characteristics.humidity}%
+                            </div>
+                        </div>
+                        
                     </FormGroup>
 
                     <hr />

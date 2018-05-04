@@ -103,9 +103,10 @@ export default {
         )
     ),
     decorateMainView: MainView => (
+        
         props => {
             return (
-                <MainView {...props}>
+                <MainView  {...props}>
                     <DeviceDetailsContainer {...props} />
                 </MainView>
             );
