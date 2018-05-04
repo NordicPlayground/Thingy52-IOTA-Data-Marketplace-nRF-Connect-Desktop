@@ -11,7 +11,9 @@ import { Panel, Form, FormGroup, ControlLabel, FormControl, InputGroup, Checkbox
 import * as dataPublisher from '../../iota/data_publisher';
 import * as DeviceDetailsActions from '../actions/deviceDetailsActions';
 import * as AdapterActions from '../actions/adapterActions';
-import * as MenuActions from '../actions/menuActions'
+import * as MenuActions from '../actions/menuActions';
+
+import AboutDialogComponent from '../components/aboutDialog';
 
 import { traverseItems, findSelectedItem } from './../common/treeViewKeyNavigation';
 import { getInstanceIds } from '../utils/api';
@@ -39,13 +41,12 @@ class DeviceDetailsContainer extends React.PureComponent {
         this.counter = this.counter.bind(this)
 
         this.state = {
-            publishInterval: 0.5,
+            publishInterval: this.props.publishInterval,
             counter: 0,
             counterInterval: null,
             buttonState: "Start Publishing",
-            uuid: "thingy-02",
-            secretKey: "T9XKPHUAMYBIPVC",
-
+            uuid: this.props.uuid,
+            secretKey: this.props.secretKey,
         };
     }
 
@@ -73,7 +74,6 @@ class DeviceDetailsContainer extends React.PureComponent {
         if (!hasNotifyProperty && !hasIndicateProperty) { return; }
 
         let cccdValue;
-        logger.error(cccdDescriptor.value);
         if (!isDescriptorNotifying) {
             if (hasNotifyProperty) {
                 cccdValue = NOTIFY;
@@ -113,7 +113,7 @@ class DeviceDetailsContainer extends React.PureComponent {
             packet.data.humidity = this.props.characteristics.humidity
         }
         console.log("Publishing packet:", packet)
-        logger.info("Published packet!");
+        logger.info("Published packet!", Date.now());
         //console.log(dataPublisher.publish)
         dataPublisher.publish(packet)
     }
@@ -230,8 +230,10 @@ class DeviceDetailsContainer extends React.PureComponent {
 
         return (
             <Panel ckassName="row" style={settingsPanelStyle}>
+                
                 <h3><b> Settings </b></h3>
                 <hr />
+                <AboutDialogComponent hideDialog={this.props.hideDialog} closeAboutDioalog={this.props.closeAboutDioalog} />
                 <div className="col-md-6 col-md-auto" style={leftPanelStyle}>
 
                     <div className="container-fluid">
@@ -260,7 +262,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                             </InputGroup>
                         </FormGroup>
                         <FormGroup>
-                            <InputGroup.Addon>publish-uuid</InputGroup.Addon>
+                            <InputGroup.Addon>Device ID</InputGroup.Addon>
                             <FormControl type="text" id="uuid" value={this.state.uuid} onChange={this.handleInputChange} />
                         </FormGroup>
                         <FormGroup>
@@ -339,6 +341,7 @@ DeviceDetailsContainer.propTypes = {
     characteristics: PropTypes.object,
     uuid: PropTypes.string,
     secretKey: PropTypes.string,
+    hideDialog: PropTypes.bool,
 }
 
 DeviceDetailsContainer.defaultProps = {
@@ -346,7 +349,6 @@ DeviceDetailsContainer.defaultProps = {
 };
 
 function mapStateToProps(state) {
-
     const {
         adapter,
         menu,
@@ -368,6 +370,13 @@ function mapStateToProps(state) {
     if (!selectedAdapter) {
         return {
             characteristics: { temperature: null, pressure: null, humidity: null },
+            temperatureIsChecked: menu.temperatureIsChecked,
+            pressureIsChecked: menu.pressureIsChecked,
+            humidityIsChecked: menu.humidityIsChecked,
+            publishInterval: menu.publishInterval,
+            uuid: menu.uuid,
+            secretKey: menu.secretKey,
+            hideDialog: menu.hideDialog,
         };
     }
     return {
@@ -375,16 +384,17 @@ function mapStateToProps(state) {
         deviceDetails: deviceDetails,
         thingy: thingy,
         sensorServices: sensorServices,
-        temperatureIsChecked: menu.temperatureIsChecked,
-        pressureIsChecked: menu.pressureIsChecked,
-        humidityIsChecked: menu.humidityIsChecked,
-        publishInterval: menu.publishInterval,
         isPublishing: menu.isPublishing,
         interval: menu.interval,
         isExpanded: menu.isExpanded,
         characteristics: menu.characteristics,
+        temperatureIsChecked: menu.temperatureIsChecked,
+        pressureIsChecked: menu.pressureIsChecked,
+        humidityIsChecked: menu.humidityIsChecked,
+        publishInterval: menu.publishInterval,
         uuid: menu.uuid,
         secretKey: menu.secretKey,
+        hideDialog: menu.hideDialog,
     };
 }
 
@@ -398,8 +408,9 @@ function mapDispatchToProps(dispatch) {
         clearPublishInterval: () => { dispatch(MenuActions.clearPublishInterval()) },
         handleChangeInterval: (value) => { dispatch(MenuActions.handleChangeInterval(value)) },
         handleChangeUUID: (value) => { dispatch(MenuActions.handleChangeUUID(value)) },
-        handleChangeSecretKey: (value) => { dispatch(MenuActions.handleChangeSecretKey(value)) }
-
+        handleChangeSecretKey: (value) => { dispatch(MenuActions.handleChangeSecretKey(value)) }, 
+        closeAboutDioalog: () => { dispatch(MenuActions.closeAboutDialog()) }
+        
     };
 }
 

@@ -45,8 +45,6 @@ import './resources/css/index.less';
 import * as AdapterActions from './lib/actions/adapterActions';
 
 import DeviceDetailsContainer from './lib/containers/deviceDetails';
-import { Container } from './lib/containers/container';
-import { MainViewContent } from './lib/containers/MainViewContent';
 
 
 /* eslint-disable react/prop-types */
@@ -99,7 +97,7 @@ export default {
             <NavMenu
                 {...props}
                 menuItems={[
-                    { id: '', text: 'About', iconClass: 'icon-star' },
+                    { id: 'About', text: 'About', iconClass: 'icon-star' },
                 ]}
             />
         )

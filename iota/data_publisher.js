@@ -14,12 +14,10 @@ function uintToString(uintArray) {
 
 export function setUUID(value) {
 	uuid = value;
-	console.log("uuid changed to: ", value)
 }
 
 export function setSecretKey(value) {
 	secretKey = value
-	console.log("secret key changed to: ", value)
 }
 
 function getUserHome() {
