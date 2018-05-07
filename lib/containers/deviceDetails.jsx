@@ -65,7 +65,7 @@ class DeviceDetailsContainer extends React.PureComponent {
     }
 
     onToggleNotify(characteristic) {
-        const cccdDescriptor = this.findCccdDescriptor(characteristic.get("children")) //fiks hardkoding
+        const cccdDescriptor = this.findCccdDescriptor(characteristic.get("children"))
         const isDescriptorNotifying = this.isNotifying(cccdDescriptor);
         const hasNotifyProperty = characteristic.properties.notify//this.props.item.properties.notify;
         const hasIndicateProperty = characteristic.properties.indicate//this.props.item.properties.indicate;
@@ -100,21 +100,18 @@ class DeviceDetailsContainer extends React.PureComponent {
             data: {
                 temperature: "",
                 pressure: "",
-                humidity: ""
+                humidity: "",
+                co2: "",
+                voc: ""
             }
         }
-        if (this.props.temperatureIsChecked) {
-            packet.data.temperature = this.props.characteristics.temperature
-        }
-        if (this.props.pressureIsChecked) {
-            packet.data.pressure = this.props.characteristics.pressure
-        }
-        if (this.props.humidityIsChecked) {
-            packet.data.humidity = this.props.characteristics.humidity
-        }
+        if (this.props.temperatureIsChecked) { packet.data.temperature = this.props.characteristics.temperature }
+        if (this.props.pressureIsChecked)    { packet.data.pressure = this.props.characteristics.pressure }
+        if (this.props.humidityIsChecked)    { packet.data.humidity = this.props.characteristics.humidity }
+        if (this.props.co2IsChecked)         { packet.data.co2 = this.props.characteristics.co2 }
+        if (this.props.vocIsChecked)         { packet.data.voc = this.props.characteristics.voc }
         console.log("Publishing packet:", packet)
-        logger.info("Published packet!", Date.now());
-        //console.log(dataPublisher.publish)
+        logger.info("Published packet!");
         dataPublisher.publish(packet)
     }
 
@@ -183,6 +180,20 @@ class DeviceDetailsContainer extends React.PureComponent {
                     this.props.checkboxIsChecked("humidity")
                     this.toggleCharacteristicWrite(".5", ".4")
                     break;
+                case "5.9-co2":
+                    if (!this.props.vocIsChecked) { //co2 and voc values comes from the same array, toggle write only when 
+                        this.toggleCharacteristicWrite(".5", ".5")
+                    }
+                    //this.expandAttribute(".5.5")
+                    this.props.checkboxIsChecked("co2")
+                    break;
+                case "5.9-voc":
+                    if (!this.props.co2IsChecked) {
+                        this.toggleCharacteristicWrite(".5", ".5")
+                    }
+                    //this.expandAttribute(".5.5")
+                    this.props.checkboxIsChecked("voc")
+                    break;
             }
         }
 
@@ -195,7 +206,7 @@ class DeviceDetailsContainer extends React.PureComponent {
             const attribute = sensorServices.get(this.props.deviceKey + attributeID)
             //console.log(sensorServices)
 
-            if (attribute && this.props.isExpanded != true) {
+            if (attribute && !this.props.isExpanded) {
                 this.props.setAttributeExpanded(attribute, true)
                 this.props.expandProp()
             }
@@ -344,8 +355,6 @@ class DeviceDetailsContainer extends React.PureComponent {
     }
 
 }
-
-
 
 
 DeviceDetailsContainer.propTypes = {
