@@ -47,6 +47,7 @@ class DeviceDetailsContainer extends React.PureComponent {
             buttonState: "Start Publishing",
             uuid: this.props.uuid,
             secretKey: this.props.secretKey,
+            buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row",
         };
     }
 
@@ -129,11 +130,13 @@ class DeviceDetailsContainer extends React.PureComponent {
             if (this.props.isPublishing) {
                 this.props.clearPublishInterval();
                 this.setState({ buttonState: "Start Publishing" })
+                this.setState({buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row"})
             } else {
                 this.publish();
                 this.props.setPublishInterval(this.publish, this.counter, this.state.publishInterval * 60000)
                 this.state.counter = this.state.publishInterval * 60
                 this.setState({ buttonState: "Stop Publishing" })
+                this.setState({buttonStyle: "btn btn-danger btn-lg btn-nordic padded-row"})
             }
         }
     }
@@ -141,8 +144,22 @@ class DeviceDetailsContainer extends React.PureComponent {
     handleInputChange(event) {
         switch (event.target.id) {
             case "interval":
-                this.setState({ publishInterval: event.target.value });
-                this.props.handleChangeInterval(this.state.publishInterval);
+                if(isNaN(event.target.value)){
+                    logger.error("Value must be a number!")
+                }else{
+                    if(this.props.isPublishing){
+                        this.props.clearPublishInterval();
+                        this.state.counter = event.target.value * 60
+                        this.props.handleChangeInterval(this.state.publishInterval);
+                        this.setState({ buttonState: "Start Publishing" })
+                        this.setState({buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row"})
+                    }else{
+                        this.setState({ publishInterval: event.target.value });
+                        this.state.counter = event.target.value * 60 
+                        this.props.handleChangeInterval(this.state.publishInterval);
+
+                    }   
+                }
                 break;
             case "uuid":
                 this.setState({ uuid: event.target.value });
@@ -235,111 +252,114 @@ class DeviceDetailsContainer extends React.PureComponent {
             marginBottom: "10px",
         }
 
+        const thingyConnectedDiv = this.props.thingy ? (<div className="col-md-6 col-md-auto" style={rightPanelStyle}>
+
+                        <FormGroup>
+                            <ControlLabel>Select what sensor data should be published</ControlLabel>
+                            <div className="row" style={checkboxContainerStyle}>
+                                <Checkbox
+                                    className="col-md-6 col-md-auto"
+                                    value="5.6"
+                                    checked={this.props.temperatureIsChecked}
+                                    onChange={this.checkBoxClicked}
+                                >
+                                    Temperature
+                                </Checkbox>
+                                <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                    {this.props.characteristics.temperature} °C
+                                </div>
+
+                            </div>
+
+                            <div className="row" style={checkboxContainerStyle}>
+                                <Checkbox
+                                    className="col-md-6 col-md-auto"
+                                    value="5.7"
+                                    checked={this.props.pressureIsChecked}
+                                    onChange={this.checkBoxClicked}
+                                >
+                                    Pressure
+                            </Checkbox>
+                                <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                    {this.props.characteristics.pressure} hPa
+                                </div>
+                            </div>
+
+                            <div className="row" style={checkboxContainerStyle}>
+                                <Checkbox
+                                    className="col-md-6 col-md-auto"
+                                    value="5.8"
+                                    checked={this.props.humidityIsChecked}
+                                    onChange={this.checkBoxClicked}
+                                >
+                                    Humidity
+                                </Checkbox>
+                                <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                    {this.props.characteristics.humidity}%
+                                </div>
+                            </div>
+                            
+                        </FormGroup>
+
+                        <hr />
+
+                        <button
+                            title="Clear list (Alt+C)"
+                            type="button"
+                            className={this.state.buttonStyle}
+                            onClick={this.publishClick}
+                        >{this.state.buttonState}</button>
+
+                    </div>) : null
         return (
-            <Panel ckassName="row" style={settingsPanelStyle}>
-                
-                <h3><b> Settings </b></h3>
-                <hr />
-                <AboutDialogComponent hideDialog={this.props.hideDialog} closeAboutDioalog={this.props.closeAboutDioalog} />
-                <div className="col-md-6 col-md-auto" style={leftPanelStyle}>
+            <div className ="container">
+                <Panel className="row" style={settingsPanelStyle}>
+                    
+                    <h3><b> Thingy52 IOTA Data Marketplace Publisher </b></h3>
+                    <hr />
+                    <AboutDialogComponent hideDialog={this.props.hideDialog} closeAboutDioalog={this.props.closeAboutDioalog} />
+                    <div className="col-md-6 col-md-auto" style={leftPanelStyle}>
 
-                    <div className="container-fluid">
-                        <div className="row" style={statusContainerStyle}>
-                            <div className="col-md-6 col-md-auto" style={statusStyle}>
-                                <b>Status</b><br />
-                                <div>Connected to :{this.props.deviceKey}</div>
-                                <div>Publishing: {this.props.isPublishing}</div>
-                            </div>
-                            <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
-                                <b>Next Publish</b><br />
-                                {this.state.counter}s
+                        <div className="container-fluid">
+                            <div className="row" style={statusContainerStyle}>
+                                <div className="col-md-6 col-md-auto" style={statusStyle}>
+                                    <b>Status</b><br />
+                                    <div>Connected to: {this.props.thingyInfo.name}</div>
+                                    <div>Publishing: {this.props.isPublishing.toString()}</div>
+                                </div>
+                                <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
+                                    <b>Next Publish</b><br />
+                                    {this.state.counter}s
+                                </div>
                             </div>
                         </div>
+
+                        <hr />
+
+                        <Form>
+                            <FormGroup>
+                                <ControlLabel>How often should the data be published?</ControlLabel>
+                                <InputGroup class="input-group-lg">
+                                    <InputGroup.Addon>Every</InputGroup.Addon>
+                                    <FormControl type="text" id="interval" value={this.state.publishInterval} onChange={this.handleInputChange} />
+                                    <InputGroup.Addon>minutes</InputGroup.Addon>
+                                </InputGroup>
+                            </FormGroup>
+                            <FormGroup>
+                                <InputGroup.Addon>Device ID</InputGroup.Addon>
+                                <FormControl type="text" id="uuid" value={this.state.uuid} onChange={this.handleInputChange} />
+                            </FormGroup>
+                            <FormGroup>
+                                <InputGroup.Addon>secretKey</InputGroup.Addon>
+                                <FormControl type="text" id="secretKey" value={this.state.secretKey} onChange={this.handleInputChange} />
+                            </FormGroup>
+                        </Form>
+
                     </div>
-
-                    <hr />
-
-                    <Form>
-                        <FormGroup>
-                            <ControlLabel>How often should the data be published?</ControlLabel>
-                            <InputGroup class="input-group-lg">
-                                <InputGroup.Addon>Every</InputGroup.Addon>
-                                <FormControl type="text" id="interval" value={this.state.publishInterval} onChange={this.handleInputChange} />
-                                <InputGroup.Addon>minutes</InputGroup.Addon>
-                            </InputGroup>
-                        </FormGroup>
-                        <FormGroup>
-                            <InputGroup.Addon>Device ID</InputGroup.Addon>
-                            <FormControl type="text" id="uuid" value={this.state.uuid} onChange={this.handleInputChange} />
-                        </FormGroup>
-                        <FormGroup>
-                            <InputGroup.Addon>secretKey</InputGroup.Addon>
-                            <FormControl type="text" id="secretKey" value={this.state.secretKey} onChange={this.handleInputChange} />
-                        </FormGroup>
-                    </Form>
-
-                </div>
-
-                <div className="col-md-6 col-md-auto" style={rightPanelStyle}>
-
-                    <FormGroup>
-                        <ControlLabel>Select what sensor data should be published</ControlLabel>
-                        <div className="row" style={checkboxContainerStyle}>
-                            <Checkbox
-                                className="col-md-6 col-md-auto"
-                                value="5.6"
-                                checked={this.props.temperatureIsChecked}
-                                onChange={this.checkBoxClicked}
-                            >
-                                Temperature
-                            </Checkbox>
-                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                {this.props.characteristics.temperature} °C
-                            </div>
-
-                        </div>
-
-                        <div className="row" style={checkboxContainerStyle}>
-                            <Checkbox
-                                className="col-md-6 col-md-auto"
-                                value="5.7"
-                                checked={this.props.pressureIsChecked}
-                                onChange={this.checkBoxClicked}
-                            >
-                                Pressure
-                        </Checkbox>
-                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                {this.props.characteristics.pressure} hPa
-                            </div>
-                        </div>
-
-                        <div className="row" style={checkboxContainerStyle}>
-                            <Checkbox
-                                className="col-md-6 col-md-auto"
-                                value="5.8"
-                                checked={this.props.humidityIsChecked}
-                                onChange={this.checkBoxClicked}
-                            >
-                                Humidity
-                            </Checkbox>
-                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                {this.props.characteristics.humidity}%
-                            </div>
-                        </div>
-                        
-                    </FormGroup>
-
-                    <hr />
-
-                    <button
-                        title="Clear list (Alt+C)"
-                        type="button"
-                        className="btn btn-primary btn-lg btn-nordic padded-row"
-                        onClick={this.publishClick}
-                    >{this.state.buttonState}</button>
-
-                </div>
-            </Panel>
+                    {thingyConnectedDiv}
+                    
+                </Panel>
+            </div>
         );
     }
 
@@ -364,6 +384,7 @@ DeviceDetailsContainer.propTypes = {
     uuid: PropTypes.string,
     secretKey: PropTypes.string,
     hideDialog: PropTypes.bool,
+    thingyInfo: PropTypes.object,
 }
 
 DeviceDetailsContainer.defaultProps = {
@@ -388,7 +409,6 @@ function mapStateToProps(state) {
         thingy = deviceDetails.devices.get(deviceKey);
         sensorServices = thingy.get("children")
     }
-
     if (!selectedAdapter) {
         return {
             characteristics: { temperature: null, pressure: null, humidity: null },
@@ -399,12 +419,15 @@ function mapStateToProps(state) {
             uuid: menu.uuid,
             secretKey: menu.secretKey,
             hideDialog: menu.hideDialog,
+            thingyInfo: {name: null},
+            isPublishing: menu.isPublishing,
         };
     }
     return {
         deviceKey: deviceKey,
         deviceDetails: deviceDetails,
         thingy: thingy,
+        thingyInfo: menu.thingy,
         sensorServices: sensorServices,
         isPublishing: menu.isPublishing,
         interval: menu.interval,
