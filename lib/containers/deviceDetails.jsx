@@ -274,93 +274,163 @@ class DeviceDetailsContainer extends React.PureComponent {
 
         const thingyConnectedDiv = this.props.thingy ? (<div className="col-md-6 col-md-auto" style={rightPanelStyle}>
 
-                        <FormGroup>
-                            <ControlLabel>Select what sensor data should be published</ControlLabel>
-                            <div className="row" style={checkboxContainerStyle}>
-                                <Checkbox
-                                    className="col-md-6 col-md-auto"
-                                    value="5.6"
-                                    checked={this.props.temperatureIsChecked}
-                                    onChange={this.checkBoxClicked}
-                                >
-                                    Temperature
-                                </Checkbox>
-                                <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                    {this.props.characteristics.temperature} °C
-                                </div>
+            <FormGroup>
+                <ControlLabel>Select what sensor data should be published</ControlLabel>
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        value="5.6"
+                        checked={this.props.temperatureIsChecked}
+                        onChange={this.checkBoxClicked}
+                    >
+                        Temperature
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.temperature} °C
+                    </div>
+                </div>
+
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        value="5.7"
+                        checked={this.props.pressureIsChecked}
+                        onChange={this.checkBoxClicked}
+                    >
+                        Pressure
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.pressure} hPa
+                    </div>
+
+                </div>
+
+                <div className="row" style={checkboxContainerStyle}>
+                        <Checkbox
+                            className="col-md-6 col-md-auto"
+                            value="5.8"
+                            checked={this.props.humidityIsChecked}
+                            onChange={this.checkBoxClicked}
+                        >
+                            Humidity
+                        </Checkbox>
+                        <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                            {this.props.characteristics.humidity}%
                         </div>
+                    </div>
 
-                        <div className="row" style={checkboxContainerStyle}>
-                            <Checkbox
-                                className="col-md-6 col-md-auto"
-                                value="5.7"
-                                checked={this.props.pressureIsChecked}
-                                onChange={this.checkBoxClicked}
-                            >
-                                Pressure
-                            </Checkbox>
-                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                {this.props.characteristics.pressure} hPa
-                            </div>
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        value="5.9-co2"
+                        checked={this.props.co2IsChecked}
+                        onChange={this.checkBoxClicked}
+                    >
+                        CO2
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.co2}ppm
+                    </div>
+                </div>
 
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        value="5.9-voc"
+                        checked={this.props.vocIsChecked}
+                        onChange={this.checkBoxClicked}
+                    >
+                        VOC
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.voc}ppb
+                    </div>
+                </div>
+
+            </FormGroup>
+
+                <hr />
+
+                <button
+                    title="Clear list (Alt+C)"
+                    type="button"
+                    className={this.state.buttonStyle}
+                    onClick={this.publishClick}
+                >{this.state.buttonState}</button>
+
+            </div>) : 
+        //##################################################################################################
+            <div className="col-md-6 col-md-auto" style={rightPanelStyle}>
+            <FormGroup>
+                <ControlLabel>Select what sensor data should be published</ControlLabel>
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        disabled
+                    >
+                        Temperature
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.temperature} °C
+                    </div>
+                </div>
+
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        disabled
+                    >
+                        Pressure
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.pressure} hPa
+                    </div>
+
+                </div>
+
+                <div className="row" style={checkboxContainerStyle}>
+                        <Checkbox
+                            className="col-md-6 col-md-auto"
+                            disabled
+                        >
+                            Humidity
+                        </Checkbox>
+                        <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                            {this.props.characteristics.humidity}%
                         </div>
+                    </div>
 
-                        <div className="row" style={checkboxContainerStyle}>
-                                <Checkbox
-                                    className="col-md-6 col-md-auto"
-                                    value="5.8"
-                                    checked={this.props.humidityIsChecked}
-                                    onChange={this.checkBoxClicked}
-                                >
-                                    Humidity
-                                </Checkbox>
-                                <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                    {this.props.characteristics.humidity}%
-                                </div>
-                            </div>
-                            
-                        <div className="row" style={checkboxContainerStyle}>
-                            <Checkbox
-                                className="col-md-6 col-md-auto"
-                                value="5.9-co2"
-                                checked={this.props.co2IsChecked}
-                                onChange={this.checkBoxClicked}
-                            >
-                                CO2
-                            </Checkbox>
-                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                {this.props.characteristics.co2}ppm
-                            </div>
-                        </div>
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        disabled
+                    >
+                        CO2
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.co2}ppm
+                    </div>
+                </div>
 
-                        <div className="row" style={checkboxContainerStyle}>
-                            <Checkbox
-                                className="col-md-6 col-md-auto"
-                                value="5.9-voc"
-                                checked={this.props.vocIsChecked}
-                                onChange={this.checkBoxClicked}
-                            >
-                                VOC
-                            </Checkbox>
-                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                {this.props.characteristics.voc}ppb
-                            </div>
-                        </div>
+                <div className="row" style={checkboxContainerStyle}>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        disabled
+                    >
+                        VOC
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.voc}ppb
+                    </div>
+                </div>
 
-                    </FormGroup>
+            </FormGroup> 
+                <hr />
 
-                            
-                            
-                        <hr />
+            </div>
 
-                        <button
-                            title="Clear list (Alt+C)"
-                            type="button"
-                            className={this.state.buttonStyle}
-                            onClick={this.publishClick}
-                        >{this.state.buttonState}</button>
 
-                    </div>) : null
+
         return (
             <div className ="container">
                 <Panel className="row" style={settingsPanelStyle}>
@@ -373,9 +443,8 @@ class DeviceDetailsContainer extends React.PureComponent {
                         <div className="container-fluid">
                             <div className="row" style={statusContainerStyle}>
                                 <div className="col-md-6 col-md-auto" style={statusStyle}>
-                                    <b>Status</b><br />
-                                    <div>Connected to: {this.props.thingyInfo.name}</div>
-                                    <div>Publishing: {this.props.isPublishing.toString()}</div>
+                                    <div><b>Publishing:</b> <br/> {this.props.isPublishing.toString()}</div>
+                                    <div><b>Connected to:</b> {this.props.thingyInfo.name}</div>
                                 </div>
                                 <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
                                     <b>Next Publish</b><br />
