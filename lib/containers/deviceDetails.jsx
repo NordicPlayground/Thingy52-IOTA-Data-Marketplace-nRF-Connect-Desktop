@@ -26,19 +26,17 @@ class DeviceDetailsContainer extends React.PureComponent {
 
     constructor(props) {
         super(props)
-        this.expandAttribute = this.expandAttribute.bind(this)
-
-        this.toggleCharacteristicWrite = this.toggleCharacteristicWrite.bind(this)
-        this.onToggleNotify = this.onToggleNotify.bind(this)
-        this.findCccdDescriptor = this.findCccdDescriptor.bind(this)
-        this.isNotifying = this.isNotifying.bind(this)
-        this.checkBoxClicked = this.checkBoxClicked.bind(this)
-
-        this.handleInputChange = this.handleInputChange.bind(this)
-        this.publish = this.publish.bind(this)
-        this.publishClick = this.publishClick.bind(this)
-        this.getAttributeValue = this.getAttributeValue.bind(this)
-        this.counter = this.counter.bind(this)
+        this.expandAttribute            = this.expandAttribute.bind(this)
+        this.toggleCharacteristicWrite  = this.toggleCharacteristicWrite.bind(this)
+        this.onToggleNotify             = this.onToggleNotify.bind(this)
+        this.findCccdDescriptor         = this.findCccdDescriptor.bind(this)
+        this.isNotifying                = this.isNotifying.bind(this)
+        this.checkBoxClicked            = this.checkBoxClicked.bind(this)
+        this.handleInputChange          = this.handleInputChange.bind(this)
+        this.publish                    = this.publish.bind(this)
+        this.publishClick               = this.publishClick.bind(this)
+        this.getAttributeValue          = this.getAttributeValue.bind(this)
+        this.counter                    = this.counter.bind(this)
 
         this.state = {
             publishInterval: 1,
@@ -51,8 +49,6 @@ class DeviceDetailsContainer extends React.PureComponent {
             gasExpanded: false,
         };
     }
-
-
 
     findCccdDescriptor(children) {
         if (!children) { return undefined; }
@@ -93,7 +89,6 @@ class DeviceDetailsContainer extends React.PureComponent {
     getAttributeValue(attributeID, characteristicID) {
         const service = this.props.sensorServices.get(this.props.deviceKey + attributeID)
         return service.get("children").get(this.props.deviceKey + attributeID + characteristicID).value
-
     }
 
     publish() {
@@ -113,7 +108,7 @@ class DeviceDetailsContainer extends React.PureComponent {
         if (this.props.co2IsChecked)         { packet.data.co2 = this.props.characteristics.co2 }
         if (this.props.vocIsChecked)         { packet.data.voc = this.props.characteristics.voc }
         console.log("Publishing packet:", packet)
-        logger.info("Published packet!");
+        logger.info("Publishing packet!");
         dataPublisher.publish(packet)
     }
 
@@ -155,7 +150,6 @@ class DeviceDetailsContainer extends React.PureComponent {
                         this.setState({ publishInterval: event.target.value });
                         this.state.counter = event.target.value * 60 
                         this.props.handleChangeInterval(this.state.publishInterval);
-
                     }   
                 }
                 break;
@@ -169,7 +163,6 @@ class DeviceDetailsContainer extends React.PureComponent {
                 this.props.handleChangeSecretKey(this.state.secretKey);
                 dataPublisher.setSecretKey(this.props.secretKey);
                 break;
-
         }
     }
 
@@ -199,17 +192,15 @@ class DeviceDetailsContainer extends React.PureComponent {
                     this.toggleCharacteristicWrite(".5", ".4")
                     break;
                 case "5.9-co2":
-                    if (!this.props.vocIsChecked) { //co2 and voc values comes from the same array, toggle write only when 
+                    if (!this.props.vocIsChecked) { 
                         this.toggleCharacteristicWrite(".5", ".5")
                     }
-                    //this.expandAttribute(".5.5")
                     this.props.checkboxIsChecked("co2")
                     break;
                 case "5.9-voc":
                     if (!this.props.co2IsChecked) {
                         this.toggleCharacteristicWrite(".5", ".5")
                     }
-                    //this.expandAttribute(".5.5")
                     this.props.checkboxIsChecked("voc")
                     break;
             }
@@ -222,23 +213,15 @@ class DeviceDetailsContainer extends React.PureComponent {
         let sensorServices = this.props.sensorServices
         if (sensorServices) {
             const attribute = sensorServices.get(this.props.deviceKey + attributeID)
-            //console.log(sensorServices)
-            //console.log("inside expand")
             if (attribute && !this.props.isExpanded) {
                 this.props.setAttributeExpanded(attribute, true)
                 this.props.expandProp()
             }
-            //console.log("sensorServices inside expandAttributes",JSON.stringify(sensorServices,null,2))
             if (attribute && this.props.isExpanded && !this.props.gasExpanded) {
-                console.log("expanding GAS")
-                console.log("gas attribute: ", JSON.stringify(sensorServices.get(this.props.deviceKey + ".5.5"),null,2))
                 this.props.setAttributeExpanded(sensorServices.get(this.props.deviceKey + ".5.5"), true)
                 this.props.expandProp()
             }
-
-
-        }
-        //console.log("sensorServices: ", JSON.stringify(sensorServices,null,2))  
+        } 
     }
 
     render() {
@@ -258,11 +241,6 @@ class DeviceDetailsContainer extends React.PureComponent {
             width: "50%"
         }
         const statusContainerStyle = {
-        }
-        const statusStyle = {
-            //borderRight: "1px solid lightgrey"
-        }
-        const nextPublishStyle = {
         }
         const checkboxContainerStyle = {
             width: "100%",
@@ -359,7 +337,8 @@ class DeviceDetailsContainer extends React.PureComponent {
                 >{this.state.buttonState}</button>
 
             </div>) : 
-        //##################################################################################################
+//###################################################################################################################
+//################## Separator for markup shown before and after a thingy connects ##################################
             <div className="col-md-6 col-md-auto" style={rightPanelStyle}>
             <FormGroup>
                 <ControlLabel>Select what sensor data should be published</ControlLabel>
@@ -389,16 +368,16 @@ class DeviceDetailsContainer extends React.PureComponent {
                 </div>
 
                 <div className="row" style={checkboxContainerStyle}>
-                        <Checkbox
-                            className="col-md-6 col-md-auto"
-                            disabled
-                        >
-                            Humidity
-                        </Checkbox>
-                        <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                            {this.props.characteristics.humidity}%
-                        </div>
+                    <Checkbox
+                        className="col-md-6 col-md-auto"
+                        disabled
+                    >
+                        Humidity
+                    </Checkbox>
+                    <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                        {this.props.characteristics.humidity}%
                     </div>
+                </div>
 
                 <div className="row" style={checkboxContainerStyle}>
                     <Checkbox
@@ -442,11 +421,11 @@ class DeviceDetailsContainer extends React.PureComponent {
 
                         <div className="container-fluid">
                             <div className="row" style={statusContainerStyle}>
-                                <div className="col-md-6 col-md-auto" style={statusStyle}>
+                                <div className="col-md-6 col-md-auto">
                                     <div><b>Publishing:</b> <br/> {this.props.isPublishing.toString()}</div>
                                     <div><b>Connected to:</b> {this.props.thingyInfo.name}</div>
                                 </div>
-                                <div className="col-md-6 col-md-auto" style={nextPublishStyle}>
+                                <div className="col-md-6 col-md-auto">
                                     <b>Next Publish</b><br />
                                     {this.state.counter}s
                                 </div>
@@ -494,7 +473,7 @@ DeviceDetailsContainer.propTypes = {
     pressureIsChecked: PropTypes.bool,
     humidityIsChecked: PropTypes.bool,
     co2IsChecked: PropTypes.bool,
-    voCIsChecked: PropTypes.bool,
+    vocIsChecked: PropTypes.bool,
     publishInterval: PropTypes.number,
     isPublishing: PropTypes.bool,
     interval: PropTypes.object,
@@ -559,6 +538,8 @@ function mapStateToProps(state) {
         uuid: menu.uuid,
         secretKey: menu.secretKey,
         hideDialog: menu.hideDialog,
+        co2IsChecked: menu.co2IsChecked,
+        vocIsChecked: menu.vocIsChecked,
     };
 }
 
