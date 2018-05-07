@@ -69,9 +69,10 @@ async function main(argv) {
 	var message = undefined;
 	var next = undefined;
 	var i = 1;
+	console.log(argv)
 
 	// Compansate for the script name being sent to node.
-	if (argv[0].endsWith('node')) {
+	if (argv[0].endsWith('node') || argv[0].endsWith('node.exe')) {
 		i = 2;
 	}
 
