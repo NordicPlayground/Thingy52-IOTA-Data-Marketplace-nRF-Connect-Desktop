@@ -1,4 +1,7 @@
 var fetch = require('node-fetch');
+if (typeof fetch !== "function") {
+	fetch = fetch.default;
+}
 var crypto = require('crypto');
 var Mam = require('./mam.node.js');
 var IOTA = require('iota.lib.js');
@@ -54,7 +57,7 @@ const pushKeys = async (root, sidekey, uuid, secret_key) => {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({ id: uuid, packet, sk: secretKey })
+		body: JSON.stringify({ id: uuid, packet, sk: secret_key })
 	});
 	return resp.json();
 }
