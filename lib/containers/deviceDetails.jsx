@@ -41,13 +41,14 @@ class DeviceDetailsContainer extends React.PureComponent {
         this.counter = this.counter.bind(this)
 
         this.state = {
-            publishInterval: this.props.publishInterval,
+            publishInterval: 1,
             counter: 0,
             counterInterval: null,
             buttonState: "Start Publishing",
             uuid: this.props.uuid,
             secretKey: this.props.secretKey,
             buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row",
+            gasExpanded: false,
         };
     }
 
@@ -66,7 +67,7 @@ class DeviceDetailsContainer extends React.PureComponent {
     }
 
     onToggleNotify(characteristic) {
-        const cccdDescriptor = this.findCccdDescriptor(characteristic.get("children")) //fiks hardkoding
+        const cccdDescriptor = this.findCccdDescriptor(characteristic.get("children"))
         const isDescriptorNotifying = this.isNotifying(cccdDescriptor);
         const hasNotifyProperty = characteristic.properties.notify//this.props.item.properties.notify;
         const hasIndicateProperty = characteristic.properties.indicate//this.props.item.properties.indicate;
@@ -101,21 +102,18 @@ class DeviceDetailsContainer extends React.PureComponent {
             data: {
                 temperature: "",
                 pressure: "",
-                humidity: ""
+                humidity: "",
+                co2: "",
+                voc: ""
             }
         }
-        if (this.props.temperatureIsChecked) {
-            packet.data.temperature = this.props.characteristics.temperature
-        }
-        if (this.props.pressureIsChecked) {
-            packet.data.pressure = this.props.characteristics.pressure
-        }
-        if (this.props.humidityIsChecked) {
-            packet.data.humidity = this.props.characteristics.humidity
-        }
+        if (this.props.temperatureIsChecked) { packet.data.temperature = this.props.characteristics.temperature }
+        if (this.props.pressureIsChecked)    { packet.data.pressure = this.props.characteristics.pressure }
+        if (this.props.humidityIsChecked)    { packet.data.humidity = this.props.characteristics.humidity }
+        if (this.props.co2IsChecked)         { packet.data.co2 = this.props.characteristics.co2 }
+        if (this.props.vocIsChecked)         { packet.data.voc = this.props.characteristics.voc }
         console.log("Publishing packet:", packet)
-        logger.info("Published packet!", Date.now());
-        //console.log(dataPublisher.publish)
+        logger.info("Published packet!");
         dataPublisher.publish(packet)
     }
 
@@ -183,13 +181,13 @@ class DeviceDetailsContainer extends React.PureComponent {
 
 
     checkBoxClicked(event) {
+        //console.log("thingy: ",JSON.stringify(this.props.sensorServices,null,2))
         if (this.props.isExpanded) {
 
             switch (event.target.value) {
                 case "5.6":
                     this.props.checkboxIsChecked("temperature")
                     this.toggleCharacteristicWrite(".5", ".2")
-
                     break;
                 case "5.7":
                     this.props.checkboxIsChecked("pressure")
@@ -199,6 +197,20 @@ class DeviceDetailsContainer extends React.PureComponent {
                 case "5.8":
                     this.props.checkboxIsChecked("humidity")
                     this.toggleCharacteristicWrite(".5", ".4")
+                    break;
+                case "5.9-co2":
+                    if (!this.props.vocIsChecked) { //co2 and voc values comes from the same array, toggle write only when 
+                        this.toggleCharacteristicWrite(".5", ".5")
+                    }
+                    //this.expandAttribute(".5.5")
+                    this.props.checkboxIsChecked("co2")
+                    break;
+                case "5.9-voc":
+                    if (!this.props.co2IsChecked) {
+                        this.toggleCharacteristicWrite(".5", ".5")
+                    }
+                    //this.expandAttribute(".5.5")
+                    this.props.checkboxIsChecked("voc")
                     break;
             }
         }
@@ -211,11 +223,19 @@ class DeviceDetailsContainer extends React.PureComponent {
         if (sensorServices) {
             const attribute = sensorServices.get(this.props.deviceKey + attributeID)
             //console.log(sensorServices)
-
-            if (attribute && this.props.isExpanded != true) {
+            //console.log("inside expand")
+            if (attribute && !this.props.isExpanded) {
                 this.props.setAttributeExpanded(attribute, true)
                 this.props.expandProp()
             }
+            //console.log("sensorServices inside expandAttributes",JSON.stringify(sensorServices,null,2))
+            if (attribute && this.props.isExpanded && !this.props.gasExpanded) {
+                console.log("expanding GAS")
+                console.log("gas attribute: ", JSON.stringify(sensorServices.get(this.props.deviceKey + ".5.5"),null,2))
+                this.props.setAttributeExpanded(sensorServices.get(this.props.deviceKey + ".5.5"), true)
+                this.props.expandProp()
+            }
+
 
         }
         //console.log("sensorServices: ", JSON.stringify(sensorServices,null,2))  
@@ -268,24 +288,24 @@ class DeviceDetailsContainer extends React.PureComponent {
                                 <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
                                     {this.props.characteristics.temperature} °C
                                 </div>
+                        </div>
 
-                            </div>
-
-                            <div className="row" style={checkboxContainerStyle}>
-                                <Checkbox
-                                    className="col-md-6 col-md-auto"
-                                    value="5.7"
-                                    checked={this.props.pressureIsChecked}
-                                    onChange={this.checkBoxClicked}
-                                >
-                                    Pressure
+                        <div className="row" style={checkboxContainerStyle}>
+                            <Checkbox
+                                className="col-md-6 col-md-auto"
+                                value="5.7"
+                                checked={this.props.pressureIsChecked}
+                                onChange={this.checkBoxClicked}
+                            >
+                                Pressure
                             </Checkbox>
-                                <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                                    {this.props.characteristics.pressure} hPa
-                                </div>
+                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                {this.props.characteristics.pressure} hPa
                             </div>
 
-                            <div className="row" style={checkboxContainerStyle}>
+                        </div>
+
+                        <div className="row" style={checkboxContainerStyle}>
                                 <Checkbox
                                     className="col-md-6 col-md-auto"
                                     value="5.8"
@@ -299,8 +319,38 @@ class DeviceDetailsContainer extends React.PureComponent {
                                 </div>
                             </div>
                             
-                        </FormGroup>
+                        <div className="row" style={checkboxContainerStyle}>
+                            <Checkbox
+                                className="col-md-6 col-md-auto"
+                                value="5.9-co2"
+                                checked={this.props.co2IsChecked}
+                                onChange={this.checkBoxClicked}
+                            >
+                                CO2
+                            </Checkbox>
+                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                {this.props.characteristics.co2}ppm
+                            </div>
+                        </div>
 
+                        <div className="row" style={checkboxContainerStyle}>
+                            <Checkbox
+                                className="col-md-6 col-md-auto"
+                                value="5.9-voc"
+                                checked={this.props.vocIsChecked}
+                                onChange={this.checkBoxClicked}
+                            >
+                                VOC
+                            </Checkbox>
+                            <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
+                                {this.props.characteristics.voc}ppb
+                            </div>
+                        </div>
+
+                    </FormGroup>
+
+                            
+                            
                         <hr />
 
                         <button
@@ -366,8 +416,6 @@ class DeviceDetailsContainer extends React.PureComponent {
 }
 
 
-
-
 DeviceDetailsContainer.propTypes = {
     deviceKey: PropTypes.string,
     deviceDetails: PropTypes.object,
@@ -376,6 +424,8 @@ DeviceDetailsContainer.propTypes = {
     temperatureIsChecked: PropTypes.bool,
     pressureIsChecked: PropTypes.bool,
     humidityIsChecked: PropTypes.bool,
+    co2IsChecked: PropTypes.bool,
+    voCIsChecked: PropTypes.bool,
     publishInterval: PropTypes.number,
     isPublishing: PropTypes.bool,
     interval: PropTypes.object,
