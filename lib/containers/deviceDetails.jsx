@@ -37,25 +37,30 @@ class DeviceDetailsContainer extends React.PureComponent {
         this.handleInputChange          = this.handleInputChange.bind(this)
         this.publish                    = this.publish.bind(this)
         this.publishClick               = this.publishClick.bind(this)
-        this.getAttributeValue          = this.getAttributeValue.bind(this)
         this.counter                    = this.counter.bind(this)
 
         this.state = {
             publishInterval: 1,
             counter: 60,
             counterInterval: null,
-            buttonState: "Start Publishing",
+            publishButtonState: "Start Publishing",
             uuid: this.props.uuid,
             secretKey: this.props.secretKey,
             gasExpanded: false,
         };
     }
 
+    //A characteristic is one of the children of a Thingy object, like (Weather, motion, etc. )
+    //A cccdDescriptor (Client Characteristic Configuration Descriptor) is a child of one of the characteristics.
+    //For instance, the Weather characteristics has the cccdDescriptors temperature, pressure, humidity, etc.
+    //This function takes in the children of a characteristic and returns any of them with the CCCD_UUID
+    //For the thingy, the CCCD_UUID is 2902 for the children able to read/write data
     findCccdDescriptor(children) {
         if (!children) { return undefined; }
         return children.find(child => child.uuid === CCCD_UUID);
     }
 
+    //Checks if a cccdDescriptor is currently publishing data from the thingy
     isNotifying(cccdDescriptor) {
         if (!cccdDescriptor) { return false; }
         const valueArray = cccdDescriptor.value.toArray();
@@ -63,6 +68,7 @@ class DeviceDetailsContainer extends React.PureComponent {
         return ((valueArray[0] & (NOTIFY | INDICATE)) > 0);
     }
 
+    //Takes in a Thingy characteristic object (like temperature, pressure, etc.) and toggles it publishing data from the thingy
     onToggleNotify(characteristic) {
         const cccdDescriptor = this.findCccdDescriptor(characteristic.get("children"))
         const isDescriptorNotifying = this.isNotifying(cccdDescriptor);
@@ -87,11 +93,8 @@ class DeviceDetailsContainer extends React.PureComponent {
         this.props.writeDescriptor(cccdDescriptor, value)
     }
 
-    getAttributeValue(attributeID, characteristicID) {
-        const service = this.props.sensorServices.get(this.props.deviceKey + attributeID)
-        return service.get("children").get(this.props.deviceKey + attributeID + characteristicID).value
-    }
-
+    //Creates a message packet with the selected thingy input data
+    //Sends the packet to the dataPublisher IOTA/MAM library, to publish to tangle/marketplace
     publish() {
         this.props.publishPacket()
         logger.info("Publishing packet!");
@@ -160,13 +163,16 @@ class DeviceDetailsContainer extends React.PureComponent {
         if (this.props.isExpanded) {
 
             switch (event.target.value) {
+                // we use hard coded uuid's to toggle sensors on and off
+                // .5 denotes the weather category
+                // .5.2 denotes temperature sensor, .5.3 pressure sensor and so on
                 case "5.6":
                     this.props.checkboxIsChecked("temperature")
                     this.toggleCharacteristicWrite(".5", ".2")
                     break;
                 case "5.7":
                     this.props.checkboxIsChecked("pressure")
-                    this.toggleCharacteristicWrite(".5", ".3")
+                    this.toggleCharacteristicWrite(".5", ".3") 
 
                     break;
                 case "5.8":
@@ -190,6 +196,10 @@ class DeviceDetailsContainer extends React.PureComponent {
 
     }
 
+    //By default, the characteristics of a Thingy does not have any children elements to get data from
+    //To do this, we need to "expand" for instance the weather characteristic, to get access to temperature, pressure etc.
+    //We do this once for weather, since it is the only characteristic we use
+    //Keep in mind that expanding is asynchronous, which can be tricky if you want to expand more than one characteristic 
     expandAttribute(attributeID) {
         let thingy = this.props.thingy
         let sensorServices = this.props.sensorServices
@@ -240,6 +250,7 @@ class DeviceDetailsContainer extends React.PureComponent {
             vocIsChecked
         } = this.props;
 
+        //two different html implementations based on if the thingy is connected or not
         const thingyConnectedDiv = this.props.thingy ? (<div className="col-md-6 col-md-auto" style={rightPanelStyle}>
 
             <FormGroup>
