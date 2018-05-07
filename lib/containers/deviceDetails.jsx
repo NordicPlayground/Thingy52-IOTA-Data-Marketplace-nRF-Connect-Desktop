@@ -7,6 +7,7 @@ import { bindActionCreators, getState } from 'redux';
 import { connect } from 'react-redux';
 import { logger } from 'nrfconnect/core';
 import { Panel, Form, FormGroup, ControlLabel, FormControl, InputGroup, Checkbox } from 'react-bootstrap';
+import {reactLocalStorage} from 'reactjs-localstorage';
 
 import * as dataPublisher from '../../iota/data_publisher';
 import * as DeviceDetailsActions from '../actions/deviceDetailsActions';
@@ -40,7 +41,7 @@ class DeviceDetailsContainer extends React.PureComponent {
 
         this.state = {
             publishInterval: 1,
-            counter: 0,
+            counter: 60,
             counterInterval: null,
             buttonState: "Start Publishing",
             uuid: this.props.uuid,
@@ -99,7 +100,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                 pressure: "",
                 humidity: "",
                 co2: "",
-                voc: ""
+                voc: "",
             }
         }
         if (this.props.temperatureIsChecked) { packet.data.temperature = this.props.characteristics.temperature }
@@ -157,11 +158,13 @@ class DeviceDetailsContainer extends React.PureComponent {
                 this.setState({ uuid: event.target.value });
                 this.props.handleChangeUUID(this.state.uuid);
                 dataPublisher.setUUID(this.props.uuid);
+                reactLocalStorage.set('uuid', event.target.value);
                 break;
             case "secretKey":
                 this.setState({ secretKey: event.target.value });
                 this.props.handleChangeSecretKey(this.state.secretKey);
                 dataPublisher.setSecretKey(this.props.secretKey);
+                reactLocalStorage.set('secretKey', event.target.value);
                 break;
         }
     }
