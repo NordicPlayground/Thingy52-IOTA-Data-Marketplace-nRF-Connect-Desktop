@@ -28,14 +28,14 @@ function createExternals() {
     ), {});
 }
 
-let eslintConfig;
-try {
-    eslintConfig = require.resolve('./node_modules/pc-nrfconnect-devdep/config/eslintrc.json');
-} catch (err) {
-    eslintConfig = require.resolve('./eslintrc.json');
-}
+// let eslintConfig;
+// try {
+//     eslintConfig = require.resolve('./node_modules/pc-nrfconnect-devdep/config/eslintrc.json');
+// } catch (err) {
+//     eslintConfig = require.resolve('./eslintrc.json');
+// }
 
-module.exports = {
+var nrfConfig = {
     devtool: isProd ? 'hidden-source-map' : 'inline-cheap-source-map',
     entry: './index.jsx',
     output: {
@@ -47,23 +47,20 @@ module.exports = {
     module: {
         rules: [{
             test: /\.(js|jsx)$/,
-            use: [{
-                loader: require.resolve('babel-loader'),
-                options: {
-                    cacheDirectory: true,
-                }
-            }, {
-                loader: require.resolve('eslint-loader'),
-                options: {
-                    configFile: eslintConfig,
-                }
-            }],
-            exclude: /node_modules/,
-        }, {
-            test: /\.json$/,
-            loader: require.resolve('json-loader'),
-        }, {
-            test: /\.less$/,
+			use: [
+				{
+					loader: require.resolve('babel-loader'),
+					options: {
+						cacheDirectory: true,
+					}
+				},
+			],
+			exclude: /node_modules/,
+		}, {
+			test: /\.json$/,
+			loader: require.resolve('json-loader'),
+		}, {
+			test: /\.less$/,
             loaders: [
                 require.resolve('style-loader'),
                 require.resolve('css-loader'),
@@ -72,13 +69,7 @@ module.exports = {
         }, {
             test: /\.(png|gif|ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
             loader: require.resolve('file-loader'),
-        },/* {
-            test: /\.rs$/,
-            loader: 'rust-emscripten-loader',
-            options: {
-              release: true
-            }
-        }*/
+        },
     ],
     },
     resolve: {
@@ -93,4 +84,39 @@ module.exports = {
     ],
     target: 'electron-renderer',
     externals: createExternals(),
+	node: {
+		__dirname: false
+	}
 };
+
+var dataPublisherConfig = {
+    entry: './iota/data_publisher/main.js',
+	target: 'node',
+    module: {
+        rules: [{
+            test: /\.(js|jsx)$/,
+			use: [
+				{
+					loader: require.resolve('babel-loader'),
+					options: {
+						cacheDirectory: true,
+					}
+				},
+			],
+			exclude: /node_modules/,
+		}]
+	},
+	resolve: {
+		extensions: ['.js', '.jsx'],
+	},
+	node: {
+		__dirname: false
+	},
+	output: {
+		path: path.join(appDirectory, 'dist'),
+        publicPath: './dist/',
+        filename: 'data_publisher.js',
+    },
+};
+
+module.exports = [nrfConfig, dataPublisherConfig];

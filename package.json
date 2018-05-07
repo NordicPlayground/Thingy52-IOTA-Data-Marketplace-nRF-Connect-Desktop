@@ -37,11 +37,16 @@
   "dependencies": {
     "babel-preset-stage-0": "^6.24.1",
     "change-case": "^3.0.1",
+    "eslint-plugin-import": "^2.7.0",
     "iota.lib.js": "^0.4.7",
     "mam.client.js": "git+https://github.com/iotaledger/mam.client.js.git",
     "mousetrap": "^1.6.1",
+    "node-fetch": "^2.1.2",
     "pify": "^3.0.0",
     "redux-thunk": "^2.2.0",
-    "eslint-plugin-import": "^2.7.0"
+    "xhr2": "^0.1.4"
+  },
+  "bin": {
+    "data_publisher": "./dist/data_publisher.js"
   }
 }

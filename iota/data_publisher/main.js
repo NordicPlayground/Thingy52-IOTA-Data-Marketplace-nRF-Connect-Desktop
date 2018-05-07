@@ -3,6 +3,7 @@ var crypto = require('crypto');
 var Mam = require('./mam.node.js');
 var IOTA = require('iota.lib.js');
 var iota = new IOTA({ provider: 'https://testnet140.tangle.works' });
+global.XMLHttpRequest = require('xhr2');
 
 let endpoint = 'https://api.marketplace.tangle.works/newData';
 
@@ -28,12 +29,13 @@ const publish = async (packet, seed, uuid, secret_key) => {
 	var trytes = iota.utils.toTrytes(packet);
 	var message = Mam.create(mam_state, trytes);
 
-	console.log(message);
+	console.log('root    ', message.root);
+	console.log('side_key', side_key);
 
+	console.log('Attaching message...');
 	await Mam.attach(message.payload, message.address);
-	console.log('Attached Message');
 
-	if (uuid !== uuid && uuid !== secret_key) {
+	if (uuid !== undefined && uuid !== undefined) {
 		let pushToDemo = await pushKeys(message.root, side_key, uuid, secret_key);
 		console.log(pushToDemo);
 	} else {
@@ -99,10 +101,12 @@ async function main(argv) {
 
 	if (message === undefined) {
 		console.log("Missing required paramter message")
-		return;
+		return false;
 	}
 
 	await publish(message, seed, devid, secret_key);
+
+	return true;
 }
 
-main(process.argv).then(() => console.log("Done"))
+main(process.argv).then((r) => {if (r) { console.log("Done") }});
