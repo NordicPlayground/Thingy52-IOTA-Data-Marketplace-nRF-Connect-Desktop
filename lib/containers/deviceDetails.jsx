@@ -9,6 +9,7 @@ import { logger } from 'nrfconnect/core';
 import { Panel, Form, FormGroup, ControlLabel, FormControl, InputGroup, Checkbox } from 'react-bootstrap';
 import {reactLocalStorage} from 'reactjs-localstorage';
 
+
 import * as dataPublisher from '../../iota/data_publisher';
 import * as DeviceDetailsActions from '../actions/deviceDetailsActions';
 import * as AdapterActions from '../actions/adapterActions';
@@ -93,24 +94,9 @@ class DeviceDetailsContainer extends React.PureComponent {
     }
 
     publish() {
-        let packet = {
-            time: Date.now(),
-            data: {
-                temperature: "",
-                pressure: "",
-                humidity: "",
-                co2: "",
-                voc: "",
-            }
-        }
-        if (this.props.temperatureIsChecked) { packet.data.temperature = this.props.characteristics.temperature }
-        if (this.props.pressureIsChecked)    { packet.data.pressure = this.props.characteristics.pressure }
-        if (this.props.humidityIsChecked)    { packet.data.humidity = this.props.characteristics.humidity }
-        if (this.props.co2IsChecked)         { packet.data.co2 = this.props.characteristics.co2 }
-        if (this.props.vocIsChecked)         { packet.data.voc = this.props.characteristics.voc }
-        console.log("Publishing packet:", packet)
+        this.props.publishPacket()
         logger.info("Publishing packet!");
-        dataPublisher.publish(packet)
+        
     }
 
     counter() {
@@ -557,7 +543,8 @@ function mapDispatchToProps(dispatch) {
         handleChangeInterval: (value) => { dispatch(MenuActions.handleChangeInterval(value)) },
         handleChangeUUID: (value) => { dispatch(MenuActions.handleChangeUUID(value)) },
         handleChangeSecretKey: (value) => { dispatch(MenuActions.handleChangeSecretKey(value)) }, 
-        closeAboutDioalog: () => { dispatch(MenuActions.closeAboutDialog()) }
+        closeAboutDioalog: () => { dispatch(MenuActions.closeAboutDialog()) },
+        publishPacket: () => { dispatch(MenuActions.publishPacket())}
         
     };
 }
