@@ -403,7 +403,7 @@ class DeviceDetailsContainer extends React.PureComponent {
             <div className ="container">
                 <Panel className="row" style={settingsPanelStyle}>
                     
-                    <h3><b> Thingy52 IOTA Data Marketplace Publisher </b></h3>
+                    <h3><b> Thingy:52 IOTA Data Marketplace Publisher </b></h3>
                     <hr />
                     <AboutDialogComponent hideDialog={this.props.hideDialog} closeAboutDioalog={this.props.closeAboutDioalog} />
                     <div className="col-md-6 col-md-auto" style={leftPanelStyle}>
