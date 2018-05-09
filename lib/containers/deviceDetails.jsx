@@ -47,7 +47,6 @@ class DeviceDetailsContainer extends React.PureComponent {
             buttonState: "Start Publishing",
             uuid: this.props.uuid,
             secretKey: this.props.secretKey,
-            buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row",
             gasExpanded: false,
         };
     }
@@ -109,14 +108,10 @@ class DeviceDetailsContainer extends React.PureComponent {
         if (this.props.isExpanded) {
             if (this.props.isPublishing) {
                 this.props.clearPublishInterval();
-                this.setState({ buttonState: "Start Publishing" })
-                this.setState({buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row"})
             } else {
                 this.publish();
                 this.props.setPublishInterval(this.publish, this.counter, this.state.publishInterval * 60000)
                 this.state.counter = this.state.publishInterval * 60
-                this.setState({ buttonState: "Stop Publishing" })
-                this.setState({buttonStyle: "btn btn-danger btn-lg btn-nordic padded-row"})
             }
         }
     }
@@ -131,8 +126,6 @@ class DeviceDetailsContainer extends React.PureComponent {
                         this.props.clearPublishInterval();
                         this.state.counter = event.target.value * 60
                         this.props.handleChangeInterval(this.state.publishInterval);
-                        this.setState({ buttonState: "Start Publishing" })
-                        this.setState({buttonStyle: "btn btn-primary btn-lg btn-nordic padded-row"})
                     }else{
                         this.setState({ publishInterval: event.target.value });
                         this.state.counter = event.target.value * 60 
@@ -213,6 +206,7 @@ class DeviceDetailsContainer extends React.PureComponent {
         } 
     }
 
+
     render() {
         if (!this.props.isExpanded) {
             this.expandAttribute(".5")
@@ -238,11 +232,18 @@ class DeviceDetailsContainer extends React.PureComponent {
             marginTop: "10px",
             marginBottom: "10px",
         }
+        const {
+            temperatureIsChecked,
+            pressureIsChecked,
+            humidityIsChecked,
+            co2IsChecked,
+            vocIsChecked
+        } = this.props;
 
         const thingyConnectedDiv = this.props.thingy ? (<div className="col-md-6 col-md-auto" style={rightPanelStyle}>
 
             <FormGroup>
-                <ControlLabel>Select what sensor data should be published</ControlLabel>
+                <ControlLabel>Select what sensors</ControlLabel>
                 <div className="row" style={checkboxContainerStyle}>
                     <Checkbox
                         className="col-md-6 col-md-auto"
@@ -253,7 +254,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         Temperature
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.temperature} °C
+                        {this.props.characteristics.temperature} 
                     </div>
                 </div>
 
@@ -267,7 +268,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         Pressure
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.pressure} hPa
+                        {this.props.characteristics.pressure} 
                     </div>
 
                 </div>
@@ -282,7 +283,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                             Humidity
                         </Checkbox>
                         <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                            {this.props.characteristics.humidity}%
+                            {this.props.characteristics.humidity}
                         </div>
                     </div>
 
@@ -296,7 +297,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         CO2
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.co2}ppm
+                        {this.props.characteristics.co2}
                     </div>
                 </div>
 
@@ -310,7 +311,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         VOC
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.voc}ppb
+                        {this.props.characteristics.voc}
                     </div>
                 </div>
 
@@ -321,9 +322,9 @@ class DeviceDetailsContainer extends React.PureComponent {
                 <button
                     title="Clear list (Alt+C)"
                     type="button"
-                    className={this.state.buttonStyle}
+                    className={this.props.publishButtonStyle}
                     onClick={this.publishClick}
-                >{this.state.buttonState}</button>
+                >{this.props.publishButtonState}</button>
 
             </div>) : 
 //###################################################################################################################
@@ -339,7 +340,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         Temperature
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.temperature} °C
+                        {this.props.characteristics.temperature} 
                     </div>
                 </div>
 
@@ -351,7 +352,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         Pressure
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.pressure} hPa
+                        {this.props.characteristics.pressure} 
                     </div>
 
                 </div>
@@ -364,7 +365,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         Humidity
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.humidity}%
+                        {this.props.characteristics.humidity}
                     </div>
                 </div>
 
@@ -376,7 +377,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         CO2
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.co2}ppm
+                        {this.props.characteristics.co2}
                     </div>
                 </div>
 
@@ -388,7 +389,7 @@ class DeviceDetailsContainer extends React.PureComponent {
                         VOC
                     </Checkbox>
                     <div className="col-md-6 col-md-auto" style={checkboxLabelStyle} >
-                        {this.props.characteristics.voc}ppb
+                        {this.props.characteristics.voc}
                     </div>
                 </div>
 
@@ -425,7 +426,7 @@ class DeviceDetailsContainer extends React.PureComponent {
 
                         <Form>
                             <FormGroup>
-                                <ControlLabel>How often should the data be published?</ControlLabel>
+                                <ControlLabel>Set publish interval</ControlLabel>
                                 <InputGroup class="input-group-lg">
                                     <InputGroup.Addon>Every</InputGroup.Addon>
                                     <FormControl type="text" id="interval" value={this.state.publishInterval} onChange={this.handleInputChange} />
@@ -472,6 +473,8 @@ DeviceDetailsContainer.propTypes = {
     secretKey: PropTypes.string,
     hideDialog: PropTypes.bool,
     thingyInfo: PropTypes.object,
+    publishButtonStyle: PropTypes.string,
+    publishButtonState: PropTypes.string,
 }
 
 DeviceDetailsContainer.defaultProps = {
@@ -479,6 +482,7 @@ DeviceDetailsContainer.defaultProps = {
 };
 
 function mapStateToProps(state) {
+
     const {
         adapter,
         menu,
@@ -498,7 +502,7 @@ function mapStateToProps(state) {
     }
     if (!selectedAdapter) {
         return {
-            characteristics: { temperature: null, pressure: null, humidity: null },
+            characteristics: { temperature: "--", pressure: "--", humidity: "--", co2: "--", voc:"--"},
             temperatureIsChecked: menu.temperatureIsChecked,
             pressureIsChecked: menu.pressureIsChecked,
             humidityIsChecked: menu.humidityIsChecked,
@@ -529,6 +533,8 @@ function mapStateToProps(state) {
         hideDialog: menu.hideDialog,
         co2IsChecked: menu.co2IsChecked,
         vocIsChecked: menu.vocIsChecked,
+        publishButtonStyle: menu.publishButtonStyle,
+        publishButtonState: menu.publishButtonState,
     };
 }
 
