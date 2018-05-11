@@ -1,57 +1,52 @@
-# nRF Connect boilerplate app
+# nRF Connect Thingy:52 IOTA Data Marketplace Publisher
 
-[![Build Status](https://travis-ci.org/NordicSemiconductor/pc-nrfconnect-boilerplate.svg?branch=master)](https://travis-ci.org/NordicSemiconductor/pc-nrfconnect-boilerplate)
 
-This project provides a starting point for developing apps that can be launched by [nRF Connect](https://github.com/NordicSemiconductor/pc-nrfconnect-core). See the [app creation documentation](https://github.com/NordicSemiconductor/pc-nrfconnect-core#creating-apps) for more information about apps and the available API.
+*nRF Connect Thingy:52 IOTA Data Marketplace Publisher* (nRF Connect IDMP) is a cross platform tool that enables connection with the nRF52 development kit and utilize it's Bluetooth<sup>&reg;</sup> functionalities. 
 
-This boilerplate provides:
+*nRF Connect Thingy:52 IOTA Data Marketplace Publisher* is implemented as an app for [nRF Connect](https://github.com/NordicSemiconductor/pc-nrfconnect-core#creating-apps).
 
-- an empty implementation of all functions in the API (index.jsx)
-- build tools (babel/webpack/eslint)
-- basic styling (less)
-- unit testing (jest)
+# Installation
 
-## Quick start
+To install the application you can download binaries from the [nRF Connect product page](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF-Connect-for-desktop) on Nordic Semiconductor web pages.
 
-1. Create the `.nrfconnect-apps/local` directory if it does not already exist:
+nRF Connect currently supports the following operating systems:
 
-    * Linux/macOS: `mkdir -p $HOME/.nrfconnect-apps/local`
-    * Windows: `md "%USERPROFILE%\.nrfconnect-apps\local"`
+* Windows
+* Ubuntu Linux 64-bit
+* macOS
 
-2. Clone this project under the `local` directory. In a terminal on Linux/macOS or Git bash on Windows:
+# Compiling from source
 
-        cd $HOME/.nrfconnect-apps/local
-        git clone https://github.com/NordicSemiconductor/pc-nrfconnect-boilerplate.git pc-nrfconnect-myapp
-        cd pc-nrfconnect-myapp
-        rm -rf .git
+Since *nRF Connect* expects local apps in `$HOME/.nrfconnect-apps/local` (Linux/macOS) or `%USERPROFILE%/.nrfconnect-apps/local` (Windows) directory, make sure your repository is cloned or linked there.
 
-    Alternatively, if you do not want to use Git, you could download the the current master branch as a [zip file](https://github.com/NordicSemiconductor/pc-nrfconnect-boilerplate/archive/master.zip) and extract it under `.nrfconnect-apps/local/pc-nrfconnect-myapp`.
 
-3. Modify relevant properties in `package.json`. At least consider changing:
+## Dependencies
 
-    * name
-    * displayName
-    * version
-    * author
-    * license
-    * repository.url
+To build this project you will need to install the following tools:
 
-4. Install dependencies:
+* Node.js (>=6.9)
+* npm (>=5.6.0) / yarn (>=1.4.0)
 
-        npm install
+## Compiling
 
-5. Build the project in development mode:
+When *nRF Connect* have been installed, you are ready to start the compilation. Run the following command from the command line, standing in the root folder of the repository:
 
-        npm run dev
+    npm install
 
-    This will keep running and watch for changes (Ctrl+C to stop). Alternatively, to build just once in production mode, run `npm run build`.
+When the procedure has completed successfully you can run the application by running:
 
-6. Run unit tests:
+    npm run dev
 
-        npm run test-watch
+The built app can be loaded by *nRF Connect* launcher.
 
-    This will keep running and watch for changes (Ctrl+C to stop). Alternatively, to run tests just once, run `npm test`.
+## Testing
 
-7. Start nRF Connect and verify that your app appears in the *Launch app* screen. If the build was successful, you should be able to launch it. Chrome Developer Tools can be opened by pressing Ctrl+Alt+I (Windows/Linux) or Cmd+Option+I (macOS). 
+Unit testing can be performed by running:
 
-8. Add your own implementation in `index.jsx` to adjust the behavior of the app.
+    npm test
+
+
+# Feedback
+
+* Ask questions on [DevZone Questions](https://devzone.nordicsemi.com)
+* File code related issues on [GitHub Issues](https://github.com/BouvetNord/it2901_2018_nordic_iota/issues)
