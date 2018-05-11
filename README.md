@@ -1,13 +1,13 @@
 # nRF Connect Thingy:52 IOTA Data Marketplace Publisher
 
 
-*nRF Connect Thingy:52 IOTA Data Marketplace Publisher* (nRF Connect IDMP) is a cross platform tool that enables connection with the nRF52 development kit and utilize it's Bluetooth<sup>&reg;</sup> functionalities. 
+*nRF Connect Thingy:52 IOTA Data Marketplace Publisher* (nRF Connect IDMP) is a cross platform tool that enables connection with the nRF52 development kit and utilize it's Bluetooth<sup>&reg;</sup> functionalities. The module is built to perform mesurements using the Thingy:52 and publish this mesurments to the [IOTA Data Marketplace](https://data.iota.org/) 
 
 *nRF Connect Thingy:52 IOTA Data Marketplace Publisher* is implemented as an app for [nRF Connect](https://github.com/NordicSemiconductor/pc-nrfconnect-core#creating-apps).
 
 # Installation
 
-To install the application you can download binaries from the [nRF Connect product page](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF-Connect-for-desktop) on Nordic Semiconductor web pages.
+To install the application you need to download the [nRF Connect product page](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF-Connect-for-desktop) on Nordic Semiconductor web pages. This is required as it is the profram this module is built for.
 
 nRF Connect currently supports the following operating systems:
 
