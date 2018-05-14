@@ -5,18 +5,20 @@ the *Nordic Thingy:52*, and publish these measurements to the
 [IOTA Data Marketplace](https://data.iota.org/) (IDMP). The module
 uses the [nRF52 Development Kit](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF52-DK)
 to allow for Bluetooth Low Energy (BLE) communication with the
-Thingy. nRF Connect Thingy:52 is implemented as an app for nRF
-Connect.
+Thingy.
+
+*nRF Connect Thingy:52* is implemented as an app for nRF Connect.
+
+This project was developed by a group of students from NTNU as part of
+their bachelor project.
 
 
 # Installation
-visit the product page, and download the app
-To start using the application, first make sure you have installed nRF Connect, which can be found at the nRF Connect product page.
-This is the platform for which the module is built.
+This module runs on top of nRF Connect for dektop; make sure this is
+installed and running. The application can be downloaded from the
+[nRF Connect product page](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF-Connect-for-desktop).
 
-To install the application you need to download the [nRF Connect product page](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF-Connect-for-desktop) on Nordic Semiconductor web pages. This is required as it is the profram this module is built for.
-
-nRF Connect currently supports the following operating systems:
+*nRF Connect* currently supports the following operating systems:
 
 * Windows
 * Ubuntu Linux 64-bit
@@ -27,12 +29,12 @@ nRF Connect currently supports the following operating systems:
 Since *nRF Connect* expects local apps in
 `$HOME/.nrfconnect-apps/local` (Linux/macOS) or
 `%USERPROFILE%/.nrfconnect-apps/local` (Windows) directory, make sure
-your repository is cloned or linked there.
+the repository is cloned or linked there.
 
 
 ## Dependencies
 
-To build this project you will need to install the following tools:
+To build this project the following tools must be installed.
 
 * Node.js (>=6.9)
 * npm (>=5.6.0)
@@ -55,10 +57,4 @@ For development purposes, the module can be built using:
 
 	npm run dev
 
-This will watch for changes and rebuild when nessecary.
-
-
-# Feedback
-
-* Ask questions on [DevZone Questions](https://devzone.nordicsemi.com)
-* File code related issues on [GitHub Issues](https://github.com/BouvetNord/it2901_2018_nordic_iota/issues)
+This will notice for changes and rebuild when nessecary.
