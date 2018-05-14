@@ -6,7 +6,6 @@ const dependencies = require('./package.json').dependencies;
 const appDirectory = fs.realpathSync(process.cwd());
 const nodeEnv = process.env.NODE_ENV || 'development';
 const isProd = nodeEnv === 'production';
-console.log("--------------------------------------------------------------- new config")
 function createExternals() {
     // Libs provided by nRF Connect at runtime
     const coreLibs = [
