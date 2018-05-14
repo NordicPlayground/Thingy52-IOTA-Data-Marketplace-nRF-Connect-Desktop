@@ -1,8 +1,8 @@
 {
-  "name": "Iota",
+  "name": "Thingy:52 IOTA Data Marketplace Publisher",
   "version": "1.1.0",
-  "description": "Starting point for creating nRF Connect apps",
-  "displayName": "Iota",
+  "description": "App for publishing sensor data from the Nordic Thingy:52 onto the IOTA Data Marketplace",
+  "displayName": "Thingy:52 IOTA Data Marketplace Publisher",
   "repository": {
     "type": "git",
     "url": ""
