@@ -22,7 +22,7 @@ export class Aggregator {
     //packet_blueprint - the expected structure and values of a packet
     //data_table - the list of received data of given type
     constructor() {
-        this.packet_blueprint = ["Temperature", "Humidity","Pressure","co2","voc"];
+        this.packet_blueprint = ["temperature", "humidity","pressure","co2","voc"];
         this.data_table = {};
         this.packet_blueprint.forEach(e => this.data_table[e] = new DataList(e));
     }
