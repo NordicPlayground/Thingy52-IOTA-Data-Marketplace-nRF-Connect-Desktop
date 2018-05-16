@@ -1,5 +1,5 @@
 {
-  "name": "Thingy:52 IOTA Data Marketplace Publisher",
+  "name": "thigny_iota_data_publisher",
   "version": "1.1.0",
   "description": "App for publishing sensor data from the Nordic Thingy:52 onto the IOTA Data Marketplace",
   "displayName": "Thingy:52 IOTA Data Marketplace Publisher",
