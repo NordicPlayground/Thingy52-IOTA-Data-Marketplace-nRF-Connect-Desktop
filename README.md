@@ -1,4 +1,7 @@
 # nRF Connect Thingy:52 IOTA Data Marketplace Publisher
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/NordicPlayground/Thingy52-IOTA-Data-Marketplace-nRF-Connect-Desktop.svg)](https://greenkeeper.io/)
+
 *nRF Connect Thingy:52 IOTA Data Marketplace Publisher*
 (nRF Connect IDMP) is a module built to collect sensor readings using
 the *Nordic Thingy:52*, and publish these measurements to the
